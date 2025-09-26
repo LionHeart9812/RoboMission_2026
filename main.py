@@ -17,6 +17,8 @@ motor_left = Motor(Port.D, positive_direction=Direction.COUNTERCLOCKWISE)
 motor_right = Motor(Port.A, positive_direction=Direction.CLOCKWISE)
 # Negativ: Runter; Positiv: Hoch
 front_grabber = Motor(Port.C, positive_direction=Direction.CLOCKWISE)
+# Negativ: Runter; Positiv: Hoch
+side_grabber = Motor(Port.B, positive_direction=Direction.COUNTERCLOCKWISE)
 colorSensor_left = ColorSensor(Port.S1)
 colorSensor_right = ColorSensor(Port.S4)
 colorReflection_left =  colorSensor_left.reflection()
@@ -28,7 +30,7 @@ i = 1
 ev3.speaker.beep()
 
 #Gestell des Roboters (Durchmessser der Reifen, Radstand)
-robot = DriveBase(motor_left, motor_right, wheel_diameter=61.3, axle_track=203)
+robot = DriveBase(motor_left, motor_right, wheel_diameter=60, axle_track=198)
 
 
 # Einstellungen variable("robot")
@@ -187,15 +189,15 @@ DriveTillDouble(5, 300)
 bremsen()
 
 #Roboter steht an der Mittellinie
-robot.straight(110)
+robot.straight(105)
 robot.turn(-90)
 
 #Roboter fährt in Ballkäfig
-robot.straight(94)
-front_grabber.run_angle(250, -100)
-robot.straight(65)
-robot.straight(-65)
-robot.straight(65)
+robot.straight(89)
+front_grabber.run_angle(500, -100)
+robot.straight(60)
+robot.straight(-60)
+robot.straight(60)
 
 robot.straight(-100)
 robot.stop()
@@ -206,17 +208,26 @@ front_grabber.run_angle(200, 45)
 robot.turn(90)
 
 robot.straight(190)
+side_grabber.run_angle(1000, -225)
 
 robot.turn(-90)
-robot.straight(75)
+robot.straight(31)
 robot.turn(90)
-
 robot.straight(95)
-robot.stop()
+side_grabber.run_angle(1000, 225)
 
-front_grabber.run_angle(50, 42.5)
+robot.turn(90)
+robot.straight(-45)
+robot.turn(-90)
+robot.straight(-20)
+
+front_grabber.run_angle(250, 40)
 wait(100)
-front_grabber.run_angle(50, -42.5)
+front_grabber.run_angle(250, -40)
+wait(200)
+front_grabber.run_angle(250, 40)
+wait(100)
+front_grabber.run_angle(250, -40)
 front_grabber.stop()
 
 robot.stop()
