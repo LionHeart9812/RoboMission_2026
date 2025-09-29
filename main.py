@@ -30,13 +30,13 @@ i = 1
 ev3.speaker.beep()
 
 #Gestell des Roboters (Durchmessser der Reifen, Radstand)
-robot = DriveBase(motor_left, motor_right, wheel_diameter=60, axle_track=198)
+robot = DriveBase(motor_left, motor_right, wheel_diameter=60, axle_track=197)
 
 
 # Einstellungen variable("robot")
-robot.settings(450, 500, 450, 500)
+robot.settings(550, 550, 450, 450)
 
-#Fahren ohne DriveBase --> Etwas genauer, aber keine Distanz
+#Fahren ohne DriveBase --> Etwas genauer anhalten, aber keine Distanz
 def fahren(speeder):
     motor_left.run(speeder)
     motor_right.run(speeder)
@@ -172,7 +172,8 @@ def LineFollower_tillDouble():
                 if colorReflection_left > 2 or colorReflection_right > 2:
                     seeingNothing = False
 
-## Fahrprogramm
+##---------------------------- Fahrprogramm ----------------------------##
+#-------------- Anfahren --------------#
 robot.straight(50)
 robot.stop()           
 
@@ -188,11 +189,25 @@ robot.stop()
 DriveTillDouble(5, 300)
 bremsen()
 
-#Roboter steht an der Mittellinie
-robot.straight(100)
+#-------------- Aufgabe MarsRover --------------#
+# Marsrover umklappen
+robot.straight(-25)
+robot.turn(90)
+robot.straight(120)
+front_grabber.run(-250)
+wait(400)
+robot.straight(-50)
+wait(200)
+front_grabber.stop()
+front_grabber.run_angle(500, 150)
 robot.turn(-90)
+robot.straight(130)
+robot.turn(-90)
+robot.straight(70)
 
-#Roboter fährt in Ballkäfig
+#-------------- Aufgabe Balls --------------#
+
+# #Roboter fährt in Ballkäfig
 robot.straight(89)
 front_grabber.run_angle(500, -100)
 robot.straight(60)
