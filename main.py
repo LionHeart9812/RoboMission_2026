@@ -30,7 +30,7 @@ i = 1
 ev3.speaker.beep()
 
 #Gestell des Roboters (Durchmessser der Reifen, Radstand)
-robot = DriveBase(motor_left, motor_right, wheel_diameter=60, axle_track=196.5)
+robot = DriveBase(motor_left, motor_right, wheel_diameter=60, axle_track=195.7)
 
 
 # Einstellungen variable("robot")
@@ -205,11 +205,11 @@ robot.turn(-90)
 
 #-------------- Aufgabe Balls --------------#
 # #Roboter fährt in Ballkäfig
-robot.straight(79)
+robot.straight(67)
 front_grabber.run_angle(600, -101)
+robot.straight(68)
+robot.straight(-60)
 robot.straight(60)
-robot.straight(-55)
-robot.straight(55)
 
 robot.straight(-100)
 robot.stop()
@@ -219,19 +219,16 @@ front_grabber.run_angle(200, 45)
 #Roboter dreht und fährt 
 robot.turn(90)
 robot.stop()
-DriveTillDouble(5, 300)
+DriveTillColor("left", 5, 300)
 bremsen()
-robot.turn(-90)
-robot.straight(150)
+robot.drive(400, 0)
+wait(1000)
+robot.stop()
+robot.straight(-100)
+robot.turn(90)
 
-# front_grabber.run_angle(150, 40)
-# wait(100)
-# front_grabber.run_angle(150, -40)
-# wait(300)
-# front_grabber.run_angle(150, 40)
-# wait(100)
-# front_grabber.run_angle(150, -40)
-# front_grabber.stop()
 
+front_grabber.stop()
+print("arschloch")
 robot.stop()
 bremsen()
