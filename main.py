@@ -18,7 +18,7 @@ motor_right = Motor(Port.A, positive_direction=Direction.CLOCKWISE)
 # Negativ: Runter; Positiv: Hoch
 front_grabber = Motor(Port.C, positive_direction=Direction.CLOCKWISE)
 # Negativ: Runter; Positiv: Hoch
-side_grabber = Motor(Port.B, positive_direction=Direction.COUNTERCLOCKWISE)
+big_grabber = Motor(Port.B, positive_direction=Direction.COUNTERCLOCKWISE)
 colorSensor_left = ColorSensor(Port.S1)
 colorSensor_right = ColorSensor(Port.S4)
 colorReflection_left =  colorSensor_left.reflection()
@@ -30,11 +30,11 @@ i = 1
 ev3.speaker.beep()
 
 #Gestell des Roboters (Durchmessser der Reifen, Radstand)
-robot = DriveBase(motor_left, motor_right, wheel_diameter=60, axle_track=197)
+robot = DriveBase(motor_left, motor_right, wheel_diameter=60, axle_track=196.5)
 
 
 # Einstellungen variable("robot")
-robot.settings(550, 550, 450, 450)
+robot.settings(600, 550, 450, 450)
 
 #Fahren ohne DriveBase --> Etwas genauer anhalten, aber keine Distanz
 def fahren(speeder):
@@ -194,22 +194,19 @@ bremsen()
 robot.straight(-25)
 robot.turn(90)
 robot.straight(120)
-front_grabber.run(-250)
-wait(400)
-robot.straight(-50)
-wait(200)
+front_grabber.run_angle(250, -85)
+robot.straight(-150)
+wait(100)
 front_grabber.stop()
-front_grabber.run_angle(500, 150)
+front_grabber.run_angle(500, 85)
 robot.turn(-90)
-robot.straight(130)
+robot.straight(120)
 robot.turn(-90)
-robot.straight(70)
 
 #-------------- Aufgabe Balls --------------#
-
 # #Roboter fährt in Ballkäfig
-robot.straight(89)
-front_grabber.run_angle(500, -100)
+robot.straight(79)
+front_grabber.run_angle(600, -101)
 robot.straight(60)
 robot.straight(-55)
 robot.straight(55)
@@ -221,31 +218,20 @@ front_grabber.run_angle(200, 45)
 
 #Roboter dreht und fährt 
 robot.turn(90)
-
-robot.straight(190)
-side_grabber.run_angle(1000, -220)
-
+robot.stop()
+DriveTillDouble(5, 300)
+bremsen()
 robot.turn(-90)
-robot.straight(31)
-robot.turn(90)
-robot.straight(95)
-side_grabber.run_angle(1000, 220)
+robot.straight(150)
 
-robot.turn(90)
-robot.straight(-42.5)
-robot.turn(-90)
-robot.straight(-20)
-robot.turn(-10)
-
-front_grabber.run_angle(150, 40)
-wait(100)
-front_grabber.run_angle(150, -40)
-wait(300)
-front_grabber.run_angle(150, 40)
-wait(100)
-front_grabber.run_angle(150, -40)
-front_grabber.stop()
+# front_grabber.run_angle(150, 40)
+# wait(100)
+# front_grabber.run_angle(150, -40)
+# wait(300)
+# front_grabber.run_angle(150, 40)
+# wait(100)
+# front_grabber.run_angle(150, -40)
+# front_grabber.stop()
 
 robot.stop()
 bremsen()
-exit()
