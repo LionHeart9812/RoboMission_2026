@@ -6,6 +6,7 @@ from pybricks.parameters import Port, Stop, Direction, Button, Color
 from pybricks.tools import wait, StopWatch, DataLog
 from pybricks.robotics import DriveBase
 from pybricks.media.ev3dev import SoundFile, ImageFile
+from pixycamev3.pixy2 import Pixy2
 
 # This program requires LEGO EV3 MicroPython v2.0 or higher.
 # Click "Open user guide" on the EV3 extension tab for more information.
@@ -16,13 +17,13 @@ ev3 = EV3Brick()
 motor_left = Motor(Port.D, positive_direction=Direction.COUNTERCLOCKWISE)
 motor_right = Motor(Port.A, positive_direction=Direction.CLOCKWISE)
 # Negativ: Runter; Positiv: Hoch
-front_grabber = Motor(Port.C, positive_direction=Direction.CLOCKWISE)
-# Negativ: Runter; Positiv: Hoch
-big_grabber = Motor(Port.B, positive_direction=Direction.COUNTERCLOCKWISE)
+front_grabber = Motor(Port.B, positive_direction=Direction.COUNTERCLOCKWISE)
 colorSensor_left = ColorSensor(Port.S1)
 colorSensor_right = ColorSensor(Port.S4)
 colorReflection_left =  colorSensor_left.reflection()
 colorReflection_right = colorSensor_right.reflection()
+pixy = Pixy2(port=1, i2c_address=0x54)
+
 seenBlack = 0
 i = 1
 
@@ -173,62 +174,3 @@ def LineFollower_tillDouble():
                     seeingNothing = False
 
 ##---------------------------- Fahrprogramm ----------------------------##
-#-------------- Anfahren --------------#
-robot.straight(50)
-robot.stop()           
-
-DriveTillColor("left", 10, 300)
-bremsen()
-
-robot.straight(60)
-robot.stop()
-
-robot.turn(-90)
-robot.stop()
-
-DriveTillDouble(5, 300)
-bremsen()
-
-#-------------- Aufgabe MarsRover --------------#
-# Marsrover umklappen
-robot.straight(-25)
-robot.turn(90)
-robot.straight(120)
-front_grabber.run_angle(250, -85)
-robot.straight(-150)
-wait(100)
-front_grabber.stop()
-front_grabber.run_angle(500, 85)
-robot.turn(-90)
-robot.straight(120)
-robot.turn(-90)
-
-#-------------- Aufgabe Balls --------------#
-# #Roboter fährt in Ballkäfig
-robot.straight(67)
-front_grabber.run_angle(600, -101)
-robot.straight(68)
-robot.straight(-60)
-robot.straight(60)
-
-robot.straight(-100)
-robot.stop()
-
-front_grabber.run_angle(200, 45)
-
-#Roboter dreht und fährt 
-robot.turn(90)
-robot.stop()
-DriveTillColor("left", 5, 300)
-bremsen()
-robot.drive(400, 0)
-wait(1000)
-robot.stop()
-robot.straight(-100)
-robot.turn(90)
-
-
-front_grabber.stop()
-print("arschloch")
-robot.stop()
-bremsen()
