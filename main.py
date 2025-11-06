@@ -22,10 +22,11 @@ colorSensor_left = ColorSensor(Port.S1)
 colorSensor_right = ColorSensor(Port.S4)
 colorReflection_left =  colorSensor_left.reflection()
 colorReflection_right = colorSensor_right.reflection()
-pixy = Pixy2(port=1, i2c_address=0x54)
+pixy = Pixy2(port=2, i2c_address=0x54)
 
 seenBlack = 0
 i = 1
+lastDirection = "none"
 
 # Write your program here.
 ev3.speaker.beep()
@@ -174,3 +175,27 @@ def LineFollower_tillDouble():
                     seeingNothing = False
 
 ##---------------------------- Fahrprogramm ----------------------------##
+while True:
+    nr_blocks, blocks = pixy.get_blocks(1, 1)
+    pixy.set_lamp(1, 0)
+    # Extract data of first (and only) block
+    if nr_blocks >= 1:
+        sig = blocks[0].sig
+        x_kiste = blocks[0].x_center
+
+        # Wenn nicht Mitte (Wert x_kiste 1 bis x_kiste), dann drehen
+        if x_kiste <= 120 or x_kiste >= 150:
+            if x_kiste < 120:
+                robot.drive(0, -50)
+                lastDirection = "left"
+                #print(x_kiste)
+                #print("left")
+            elif x_kiste > 150:
+                robot.drive(0, 50)
+                lastDirection = "right"
+                #print(x_kiste)
+                #print("right")
+
+        else:
+            robot.stop()
+            #print(x_kiste)
