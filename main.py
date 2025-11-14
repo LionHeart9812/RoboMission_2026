@@ -17,7 +17,9 @@ ev3 = EV3Brick()
 motor_left = Motor(Port.D, positive_direction=Direction.COUNTERCLOCKWISE)
 motor_right = Motor(Port.A, positive_direction=Direction.CLOCKWISE)
 # Negativ: Runter; Positiv: Hoch
-front_grabber = Motor(Port.B, positive_direction=Direction.COUNTERCLOCKWISE)
+front_grabber_bottom = Motor(Port.C, positive_direction=Direction.COUNTERCLOCKWISE)
+# Negativ: Zu; Positiv: Auf
+front_grabber_top = Motor(Port.B, positive_direction=Direction.CLOCKWISE)
 colorSensor_left = ColorSensor(Port.S1)
 colorSensor_right = ColorSensor(Port.S4)
 colorReflection_left =  colorSensor_left.reflection()
@@ -36,7 +38,7 @@ robot = DriveBase(motor_left, motor_right, wheel_diameter=60, axle_track=195.7)
 
 
 # Einstellungen variable("robot")
-robot.settings(600, 550, 450, 450)
+robot.settings(600, 550, 550, 550)
 
 #Fahren ohne DriveBase --> Etwas genauer anhalten, aber keine Distanz
 def fahren(speeder):
@@ -174,28 +176,59 @@ def LineFollower_tillDouble():
                 if colorReflection_left > 2 or colorReflection_right > 2:
                     seeingNothing = False
 
+#Erkennen der Süßigkeitenkiste
+def KisteErkennen():
+    while True:
+        nr_blocks, blocks = pixy.get_blocks(1, 1)
+        pixy.set_lamp(0, 0)
+        # Extract data of first (and only) block
+        if nr_blocks >= 1:
+            sig = blocks[0].sig
+            x_kiste = blocks[0].x_center
+
+            # Wenn nicht Mitte (Wert x_kiste 1 bis x_kiste), dann drehen
+            if x_kiste <= 120 or x_kiste >= 150:
+                if x_kiste < 120:
+                    robot.drive(0, -50)
+                    lastDirection = "left"
+                    #print(x_kiste)
+                    #print("left")
+                elif x_kiste > 150:
+                    robot.drive(0, 50)
+                    lastDirection = "right"
+                    #print(x_kiste)
+                    #print("right")
+
+            else:
+                robot.stop()
+                print("Stehe Mitte")
+                #print(x_kiste)
+                return True
+
 ##---------------------------- Fahrprogramm ----------------------------##
-while True:
-    nr_blocks, blocks = pixy.get_blocks(1, 1)
-    pixy.set_lamp(1, 0)
-    # Extract data of first (and only) block
-    if nr_blocks >= 1:
-        sig = blocks[0].sig
-        x_kiste = blocks[0].x_center
+## Anfahren ##
+DriveTillColor("left", 7, 400)
+bremsen()
+robot.straight(25)
+robot.turn(-90)
+robot.stop()
+LineFollower_tillDouble()
+bremsen()
+robot.turn(90)
+robot.stop()
+LineFollower_tillDouble()
+bremsen()
+robot.turn(-10)
 
-        # Wenn nicht Mitte (Wert x_kiste 1 bis x_kiste), dann drehen
-        if x_kiste <= 120 or x_kiste >= 150:
-            if x_kiste < 120:
-                robot.drive(0, -50)
-                lastDirection = "left"
-                #print(x_kiste)
-                #print("left")
-            elif x_kiste > 150:
-                robot.drive(0, 50)
-                lastDirection = "right"
-                #print(x_kiste)
-                #print("right")
+## In die Kiste grabben ##
+# isMiddle = KisteErkennen()
 
-        else:
-            robot.stop()
-            #print(x_kiste)
+# if isMiddle == True:
+#     robot.stop()
+#     front_grabber_top.run_angle(-300, 100)
+
+#     robot.straight(-350)
+#     front_grabber_bottom.run_time(-500, 1300)
+#     front_grabber_bottom.run_angle(200, 5, then=Stop.HOLD)
+#     front_grabber_top.run_time(500, 850)
+#     front_grabber_bottom.run_time(250, 1500, then=Stop.COAST)
