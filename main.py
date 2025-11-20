@@ -36,7 +36,6 @@ ev3.speaker.beep()
 #Gestell des Roboters (Durchmessser der Reifen, Radstand)
 robot = DriveBase(motor_left, motor_right, wheel_diameter=60, axle_track=195.7)
 
-
 # Einstellungen variable("robot")
 robot.settings(600, 550, 550, 550)
 
@@ -170,7 +169,7 @@ def LineFollower_tillDouble():
                 colorReflection_left =  colorSensor_left.reflection()
                 colorReflection_right = colorSensor_right.reflection()
 
-                robot.drive(375, 0)
+                robot.drive(300, 0)
                 seenBlack = 0
 
                 if colorReflection_left > 2 or colorReflection_right > 2:
@@ -178,6 +177,9 @@ def LineFollower_tillDouble():
 
 #Erkennen der Süßigkeitenkiste
 def KisteErkennen():
+    minimal_middle = 150
+    maximal_middle = 180
+
     while True:
         nr_blocks, blocks = pixy.get_blocks(1, 1)
         pixy.set_lamp(0, 0)
@@ -187,13 +189,13 @@ def KisteErkennen():
             x_kiste = blocks[0].x_center
 
             # Wenn nicht Mitte (Wert x_kiste 1 bis x_kiste), dann drehen
-            if x_kiste <= 120 or x_kiste >= 150:
-                if x_kiste < 120:
+            if x_kiste <= minimal_middle or x_kiste >= maximal_middle:
+                if x_kiste < minimal_middle:
                     robot.drive(0, -50)
                     lastDirection = "left"
                     #print(x_kiste)
                     #print("left")
-                elif x_kiste > 150:
+                elif x_kiste > maximal_middle:
                     robot.drive(0, 50)
                     lastDirection = "right"
                     #print(x_kiste)
@@ -214,21 +216,26 @@ robot.turn(-90)
 robot.stop()
 LineFollower_tillDouble()
 bremsen()
-robot.turn(90)
+robot.straight(50)
+wait(500)
+robot.turn(92)
+robot.straight(575)
 robot.stop()
+DriveTillColor("right", 7, 400)
 LineFollower_tillDouble()
 bremsen()
-robot.turn(-10)
+robot.straight(300)
+robot.turn(180)
 
 ## In die Kiste grabben ##
-# isMiddle = KisteErkennen()
+isMiddle = KisteErkennen()
 
-# if isMiddle == True:
-#     robot.stop()
-#     front_grabber_top.run_angle(-300, 100)
+if isMiddle == True:
+    robot.stop()
+    front_grabber_top.run_angle(-300, 100)
 
-#     robot.straight(-350)
-#     front_grabber_bottom.run_time(-500, 1300)
-#     front_grabber_bottom.run_angle(200, 5, then=Stop.HOLD)
-#     front_grabber_top.run_time(500, 850)
-#     front_grabber_bottom.run_time(250, 1500, then=Stop.COAST)
+    robot.straight(-175)
+    front_grabber_bottom.run_time(-500, 1300)
+    front_grabber_bottom.run_angle(200, 5, then=Stop.HOLD)
+    front_grabber_top.run_time(500, 850)
+    front_grabber_bottom.run_time(250, 1500, then=Stop.COAST)
