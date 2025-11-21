@@ -34,10 +34,10 @@ lastDirection = "none"
 ev3.speaker.beep()
 
 #Gestell des Roboters (Durchmessser der Reifen, Radstand)
-robot = DriveBase(motor_left, motor_right, wheel_diameter=60, axle_track=195.7)
+robot = DriveBase(motor_left, motor_right, wheel_diameter=60, axle_track=198.9)
 
 # Einstellungen variable("robot")
-robot.settings(600, 550, 550, 550)
+robot.settings(600, 550, 450, 350)
 
 #Fahren ohne DriveBase --> Etwas genauer anhalten, aber keine Distanz
 def fahren(speeder):
@@ -177,8 +177,8 @@ def LineFollower_tillDouble():
 
 #Erkennen der Süßigkeitenkiste
 def KisteErkennen():
-    minimal_middle = 150
-    maximal_middle = 180
+    minimal_middle = 130
+    maximal_middle = 155
 
     while True:
         nr_blocks, blocks = pixy.get_blocks(1, 1)
@@ -206,19 +206,37 @@ def KisteErkennen():
                 print("Stehe Mitte")
                 #print(x_kiste)
                 return True
+            
+def checkUp():
+    robot.straight(-100)
+    front_grabber_top.run_angle(-300, 50)
+    wait(100)
+    front_grabber_top.run_angle(-300, -50)
+    robot.turn(90)
+    wait(250)
+    robot.turn(90)
+    wait(250)
+    robot.turn(90)
+    wait(250)
+    robot.turn(90)
+    wait(250)
+    robot.straight(90)
+    wait(10000)
 
 ##---------------------------- Fahrprogramm ----------------------------##
 ## Anfahren ##
+#checkUp()
 DriveTillColor("left", 7, 400)
 bremsen()
 robot.straight(25)
+wait(100)
 robot.turn(-90)
 robot.stop()
 LineFollower_tillDouble()
 bremsen()
-robot.straight(50)
-wait(500)
-robot.turn(92)
+robot.straight(75)
+wait(200)
+robot.turn(90)
 robot.straight(575)
 robot.stop()
 DriveTillColor("right", 7, 400)
@@ -232,10 +250,12 @@ isMiddle = KisteErkennen()
 
 if isMiddle == True:
     robot.stop()
-    front_grabber_top.run_angle(-300, 100)
+    front_grabber_top.run_angle(-300, 50)
+    print("Gehe runter")
 
     robot.straight(-175)
-    front_grabber_bottom.run_time(-500, 1300)
+    robot.straight(35)
+    front_grabber_bottom.run_time(-400, 1300)
     front_grabber_bottom.run_angle(200, 5, then=Stop.HOLD)
-    front_grabber_top.run_time(500, 850)
+    front_grabber_top.run_time(400, 550)
     front_grabber_bottom.run_time(250, 1500, then=Stop.COAST)
