@@ -7,6 +7,7 @@ from pybricks.tools import wait, StopWatch, DataLog
 from pybricks.robotics import DriveBase
 from pybricks.media.ev3dev import SoundFile, ImageFile
 from pixycamev3.pixy2 import Pixy2
+import time
 
 # This program requires LEGO EV3 MicroPython v2.0 or higher.
 # Click "Open user guide" on the EV3 extension tab for more information.
@@ -67,6 +68,7 @@ def DriveTillDouble(colorIndex, speed):
             ev3.speaker.beep()
             print("color sensor left: " + str(colorReflection_left))
             print("color sensor right: " + str(colorReflection_right))
+            print("----------------------------")
             seenBlack = 1
 
 def DriveTillColor(whichSensor, colorIndex, speed):
@@ -83,6 +85,7 @@ def DriveTillColor(whichSensor, colorIndex, speed):
                 bremsen()
                 ev3.speaker.beep()
                 print("color sensor left: " + str(colorReflection_left))
+                print("----------------------------")
                 seenBlack = 1
 
     elif whichSensor == "right":
@@ -98,6 +101,7 @@ def DriveTillColor(whichSensor, colorIndex, speed):
                 bremsen()
                 ev3.speaker.beep()
                 print("color sensor left: " + str(colorReflection_right))
+                print("----------------------------")
                 seenBlack = 1
 
 
@@ -137,6 +141,7 @@ def LineFollower_tillDouble():
                     ev3.speaker.beep()
                     print("color sensor left: " + str(colorReflection_left))
                     print("color sensor right: " + str(colorReflection_right))
+                    print("----------------------------")
 
         # Wenn rechter, dann etwas nach links
         elif colorReflection_right < 15 and seeingNothing == False:
@@ -160,6 +165,7 @@ def LineFollower_tillDouble():
                     ev3.speaker.beep()
                     print("color sensor left: " + str(colorReflection_left))
                     print("color sensor right: " + str(colorReflection_right))
+                    print("----------------------------")
 
         # Wenn kein Sensor auf schwarz, oder nichts erkennen, fahre geradeaus
         elif colorReflection_right > 14 and colorReflection_left > 14 or seeingNothing == True:
@@ -178,7 +184,7 @@ def LineFollower_tillDouble():
 #Erkennen der Süßigkeitenkiste
 def KisteErkennen():
     minimal_middle = 130
-    maximal_middle = 155
+    maximal_middle = 160
 
     while True:
         nr_blocks, blocks = pixy.get_blocks(1, 1)
@@ -204,8 +210,27 @@ def KisteErkennen():
             else:
                 robot.stop()
                 print("Stehe Mitte")
-                #print(x_kiste)
+                print("X-Koordinate von der Kiste:", x_kiste)
                 return True
+            
+def BonbonErkennen():
+    detectedColor = "none"
+    start = time.time()
+
+    while time.time() - start < 3.5:
+        nr_blocks, blocks = pixy.get_blocks(6, 1)
+        pixy.set_lamp(0, 0)
+        # Extract data of first (and only) block
+        if nr_blocks >= 1:
+            colorSIG = blocks[0].sig
+            # colorSIZE = blocks[0].width
+            if colorSIG == 2:
+                return "purple"
+            elif colorSIG == 3:
+                return "green"
+            
+    return "orange"
+
             
 def checkUp():
     robot.straight(-100)
@@ -234,7 +259,7 @@ robot.turn(-90)
 robot.stop()
 LineFollower_tillDouble()
 bremsen()
-robot.straight(75)
+robot.straight(70)
 wait(200)
 robot.turn(90)
 robot.straight(575)
@@ -251,11 +276,20 @@ isMiddle = KisteErkennen()
 if isMiddle == True:
     robot.stop()
     front_grabber_top.run_angle(-300, 50)
-    print("Gehe runter")
 
     robot.straight(-175)
     robot.straight(35)
-    front_grabber_bottom.run_time(-400, 1300)
-    front_grabber_bottom.run_angle(200, 5, then=Stop.HOLD)
-    front_grabber_top.run_time(400, 550)
-    front_grabber_bottom.run_time(250, 1500, then=Stop.COAST)
+    front_grabber_bottom.run_time(-450, 1300)
+    #front_grabber_bottom.run_angle(200, 5, then=Stop.HOLD)
+    front_grabber_top.run_time(550, 525)
+    front_grabber_bottom.run_time(125, 1500, then=Stop.COAST)
+
+# Tütchen analysieren
+    robot.straight(200)
+    robot.turn(-90)
+    front_grabber_bottom.run_angle(125, -200)
+
+    detectedColor = BonbonErkennen()
+    print("Erkante Farbe:", detectedColor)
+    ev3.speaker.beep()
+    front_grabber_bottom.run_time(-125, 1500, then=Stop.COAST)
