@@ -35,10 +35,10 @@ lastDirection = "none"
 ev3.speaker.beep()
 
 #Gestell des Roboters (Durchmessser der Reifen, Radstand)
-robot = DriveBase(motor_left, motor_right, wheel_diameter=60, axle_track=198.9)
+robot = DriveBase(motor_left, motor_right, wheel_diameter=60, axle_track=199)
 
 # Einstellungen variable("robot")
-robot.settings(600, 550, 450, 350)
+robot.settings(600, 550, 250, 200)
 
 #Fahren ohne DriveBase --> Etwas genauer anhalten, aber keine Distanz
 def fahren(speeder):
@@ -231,6 +231,32 @@ def BonbonErkennen():
             
     return "orange"
 
+def driveToPlace(whichColor):
+    if whichColor == "purple":
+        robot.turn(90)
+        DriveTillDouble(7, -150)
+        robot.turn(-90)
+        DriveTillDouble(7, -150)
+        robot.turn(-15)
+        front_grabber_bottom.run_angle(125, -225)
+        front_grabber_top.run_angle(125, 50)
+    elif whichColor == "green":
+        robot.turn(-90)
+        DriveTillDouble(7, -150)
+        robot.turn(90)
+        DriveTillDouble(7, -150)
+        robot.turn(-15)
+        front_grabber_bottom.run_angle(125, -225)
+        front_grabber_top.run_angle(125, 50)
+    else:
+        robot.turn(90)
+        DriveTillDouble(7, -150)
+        robot.turn(-90)
+        DriveTillDouble(7, -150)
+        robot.turn(15)
+        front_grabber_bottom.run_angle(125, -225)
+        front_grabber_top.run_angle(125, 50)
+
             
 def checkUp():
     robot.straight(-100)
@@ -250,17 +276,14 @@ def checkUp():
 
 ##---------------------------- Fahrprogramm ----------------------------##
 ## Anfahren ##
-#checkUp()
-DriveTillColor("left", 7, 400)
-bremsen()
-robot.straight(25)
+checkUp()
+DriveTillColor("right", 7, -300)
 wait(100)
-robot.turn(-90)
+robot.turn(90)
 robot.stop()
-LineFollower_tillDouble()
+DriveTillDouble(7, 400)
 bremsen()
-robot.straight(70)
-wait(200)
+robot.straight(100)
 robot.turn(90)
 robot.straight(575)
 robot.stop()
@@ -277,7 +300,7 @@ if isMiddle == True:
     robot.stop()
     front_grabber_top.run_angle(-300, 50)
 
-    robot.straight(-175)
+    robot.straight(-185)
     robot.straight(35)
     front_grabber_bottom.run_time(-450, 1300)
     #front_grabber_bottom.run_angle(200, 5, then=Stop.HOLD)
@@ -292,4 +315,6 @@ if isMiddle == True:
     detectedColor = BonbonErkennen()
     print("Erkante Farbe:", detectedColor)
     ev3.speaker.beep()
-    front_grabber_bottom.run_time(-125, 1500, then=Stop.COAST)
+    front_grabber_bottom.run_time(125, 1500, then=Stop.COAST)
+
+    driveToPlace(detectedColor)
