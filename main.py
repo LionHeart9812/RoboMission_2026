@@ -183,8 +183,8 @@ def LineFollower_tillDouble():
 
 #Erkennen der Süßigkeitenkiste
 def KisteErkennen():
-    minimal_middle = 130
-    maximal_middle = 160
+    minimal_middle = 140
+    maximal_middle = 155
 
     while True:
         nr_blocks, blocks = pixy.get_blocks(1, 1)
@@ -197,12 +197,12 @@ def KisteErkennen():
             # Wenn nicht Mitte (Wert x_kiste 1 bis x_kiste), dann drehen
             if x_kiste <= minimal_middle or x_kiste >= maximal_middle:
                 if x_kiste < minimal_middle:
-                    robot.drive(0, -50)
+                    robot.drive(0, -40)
                     lastDirection = "left"
                     #print(x_kiste)
                     #print("left")
                 elif x_kiste > maximal_middle:
-                    robot.drive(0, 50)
+                    robot.drive(0, 40)
                     lastDirection = "right"
                     #print(x_kiste)
                     #print("right")
@@ -233,41 +233,42 @@ def BonbonErkennen():
 
 def driveToPlace(whichColor):
     if whichColor == "purple":
+        fahren(500)
+        time.sleep(4)
+        robot.stop()
+        robot.straight(-150)
         robot.turn(90)
+        robot.straight(-100)
         robot.stop()
-        DriveTillDouble(7, -150)
-        bremsen()
-        robot.turn(-90)
-        robot.stop()
-        DriveTillDouble(7, -150)
-        bremsen()
-        robot.turn(-15)
+        DriveTillDouble(7, -500)
+        
         front_grabber_bottom.run_angle(125, -225)
-        front_grabber_top.run_angle(125, 50)
+        front_grabber_top.run_angle(-125, 50)
     elif whichColor == "green":
+        robot.turn(180)
+        fahren(500)
+        time.sleep(4)
+        robot.stop()
+        robot.straight(-150)
         robot.turn(-90)
+        robot.straight(-100)
         robot.stop()
-        DriveTillDouble(7, -150)
-        bremsen()
-        robot.turn(90)
-        robot.stop()
-        DriveTillDouble(7, -150)
-        bremsen()
-        robot.turn(-15)
+        DriveTillDouble(7, -500)
+
         front_grabber_bottom.run_angle(125, -225)
-        front_grabber_top.run_angle(125, 50)
+        front_grabber_top.run_angle(-125, 50)
     else:
+        fahren(500)
+        time.sleep(4)
+        robot.stop()
+        robot.straight(-150)
         robot.turn(90)
+        robot.straight(-100)
         robot.stop()
-        DriveTillDouble(7, -150)
-        bremsen()
-        robot.turn(-90)
-        robot.stop()
-        DriveTillDouble(7, -150)
-        bremsen()
-        robot.turn(15)
+        DriveTillDouble(7, -500)
+
         front_grabber_bottom.run_angle(125, -225)
-        front_grabber_top.run_angle(125, 50)
+        front_grabber_top.run_angle(-125, 50)
 
             
 def checkUp():
@@ -295,17 +296,19 @@ robot.turn(90)
 robot.stop()
 DriveTillDouble(7, 400)
 bremsen()
-robot.straight(105)
+robot.straight(95)
 wait(100)
 robot.turn(90)
 robot.straight(575)
 robot.stop()
 DriveTillColor("right", 7, 400)
 bremsen()
+wait(400)
 robot.straight(50)
 robot.stop()
 LineFollower_tillDouble()
 bremsen()
+wait(400)
 robot.straight(300)
 robot.turn(180)
 
@@ -314,11 +317,11 @@ isMiddle = KisteErkennen()
 
 if isMiddle == True:
     robot.stop()
-    front_grabber_top.run_angle(-300, 50)
+    front_grabber_top.run_angle(-300, 65)
 
     robot.straight(-185)
-    robot.straight(35)
-    front_grabber_bottom.run_time(-450, 1300)
+    robot.straight(25)
+    front_grabber_bottom.run_time(-550, 1300)
     #front_grabber_bottom.run_angle(200, 5, then=Stop.HOLD)
     front_grabber_top.run_time(550, 525)
     front_grabber_bottom.run_time(125, 1500, then=Stop.COAST)
