@@ -232,40 +232,52 @@ def BonbonErkennen():
     return "orange"
 
 def driveToPlace(whichColor):
+    # Lila, rechte Seite + rechts
     if whichColor == "purple":
         fahren(500)
-        time.sleep(4)
+        time.sleep(3.5)
         robot.stop()
         robot.straight(-150)
         robot.turn(90)
-        robot.straight(-100)
+        robot.straight(-150)
         robot.stop()
         DriveTillDouble(7, -500)
+        bremsen()
+        motor_left.run_angle(-500, -300)
+        robot.straight(35)
         
         front_grabber_bottom.run_angle(125, -225)
         front_grabber_top.run_angle(-125, 50)
+    # Grün , linke Seite + rechts
     elif whichColor == "green":
         robot.turn(180)
         fahren(500)
-        time.sleep(4)
+        time.sleep(3.5)
         robot.stop()
         robot.straight(-150)
         robot.turn(-90)
-        robot.straight(-100)
+        robot.straight(-150)
         robot.stop()
         DriveTillDouble(7, -500)
+        bremsen()
+        motor_left.run_angle(-500, -300)
+        robot.straight(35)
 
         front_grabber_bottom.run_angle(125, -225)
         front_grabber_top.run_angle(-125, 50)
+        # Orange (und nichts) , rechts Seite + rechts
     else:
         fahren(500)
-        time.sleep(4)
+        time.sleep(3.5)
         robot.stop()
         robot.straight(-150)
         robot.turn(90)
-        robot.straight(-100)
+        robot.straight(-150)
         robot.stop()
         DriveTillDouble(7, -500)
+        bremsen()
+        motor_right.run_angle(-500, -300)
+        robot.straight(35)
 
         front_grabber_bottom.run_angle(125, -225)
         front_grabber_top.run_angle(-125, 50)
@@ -290,53 +302,60 @@ def checkUp():
 ##---------------------------- Fahrprogramm ----------------------------##
 ## Anfahren ##
 # checkUp()
+robot.straight(-200)
+robot.stop()
 DriveTillColor("right", 7, -300)
-wait(100)
+bremsen()
+wait(50)
 robot.turn(90)
 robot.stop()
 DriveTillDouble(7, 400)
 bremsen()
-robot.straight(95)
+robot.straight(75)
 wait(100)
 robot.turn(90)
 robot.straight(575)
 robot.stop()
 DriveTillColor("right", 7, 400)
 bremsen()
-wait(400)
+wait(100)
 robot.straight(50)
 robot.stop()
 LineFollower_tillDouble()
 bremsen()
-wait(400)
+wait(100)
 robot.straight(300)
 robot.turn(180)
 
-## In die Kiste grabben ##
-isMiddle = KisteErkennen()
+while True:
+    ## In die Kiste grabben ##
+    isMiddle = KisteErkennen()
 
-if isMiddle == True:
-    robot.stop()
-    front_grabber_top.run_angle(-300, 65)
+    if isMiddle == True:
+        robot.stop()
+        front_grabber_top.run_angle(-300, 65)
 
-    robot.straight(-185)
-    robot.straight(25)
-    front_grabber_bottom.run_time(-550, 1300)
-    #front_grabber_bottom.run_angle(200, 5, then=Stop.HOLD)
-    front_grabber_top.run_time(550, 525)
-    front_grabber_bottom.run_time(125, 1500, then=Stop.COAST)
+        robot.straight(-185)
+        robot.straight(25)
+        front_grabber_bottom.run_time(-550, 1300)
+        #front_grabber_bottom.run_angle(200, 5, then=Stop.HOLD)
+        front_grabber_top.run_time(550, 525)
+        front_grabber_bottom.run_time(125, 1800, then=Stop.COAST)
 
-# Tütchen analysieren
-    robot.straight(200)
-    robot.turn(-90)
-    front_grabber_bottom.run_angle(125, -200)
+    ## Tütchen analysieren ##
+        robot.straight(200)
+        robot.turn(-90)
+        front_grabber_bottom.run_angle(125, -200)
 
-    detectedColor = BonbonErkennen()
-    print("Erkante Farbe:", detectedColor)
-    ev3.speaker.beep()
-    front_grabber_bottom.run_time(125, 1500, then=Stop.COAST)
-    front_grabber_bottom.stop()
-    robot.stop()
+        detectedColor = BonbonErkennen()
+        print("Erkante Farbe:", detectedColor)
+        ev3.speaker.beep()
+        front_grabber_bottom.run_time(125, 1800, then=Stop.COAST)
+        front_grabber_bottom.stop()
+        robot.stop()
 
-    driveToPlace(detectedColor)
-    robot.stop()
+        driveToPlace(detectedColor)
+        robot.stop()
+        time.sleep(1)
+        front_grabber_top.run_angle(125, 50)
+        front_grabber_bottom.run_time(125, 1800, then=Stop.COAST)
