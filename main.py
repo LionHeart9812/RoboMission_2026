@@ -38,7 +38,7 @@ ev3.speaker.beep()
 robot = DriveBase(motor_left, motor_right, wheel_diameter=60, axle_track=199)
 
 # Einstellungen variable("robot")
-robot.settings(600, 550, 250, 200)
+robot.settings(600, 550, 200, 150)
 
 #Fahren ohne DriveBase --> Etwas genauer anhalten, aber keine Distanz
 def fahren(speeder):
@@ -183,8 +183,8 @@ def LineFollower_tillDouble():
 
 #Erkennen der Süßigkeitenkiste
 def KisteErkennen():
-    minimal_middle = 140
-    maximal_middle = 155
+    minimal_middle = 147.5
+    maximal_middle = 162.5
 
     while True:
         nr_blocks, blocks = pixy.get_blocks(1, 1)
@@ -217,8 +217,8 @@ def BonbonErkennen():
     detectedColor = "none"
     start = time.time()
 
-    while time.time() - start < 3.5:
-        nr_blocks, blocks = pixy.get_blocks(6, 1)
+    while time.time() - start < 2.75:
+        nr_blocks, blocks = pixy.get_blocks(5, 1)
         pixy.set_lamp(0, 0)
         # Extract data of first (and only) block
         if nr_blocks >= 1:
@@ -228,60 +228,131 @@ def BonbonErkennen():
                 return "purple"
             elif colorSIG == 3:
                 return "green"
+            elif colorSIG == 1:
+                return "orange"
+
+    return None        
             
-    return "orange"
 
 def driveToPlace(whichColor):
-    # Lila, rechte Seite + rechts
-    if whichColor == "purple":
-        fahren(500)
-        time.sleep(3.5)
-        robot.stop()
-        robot.straight(-150)
-        robot.turn(90)
-        robot.straight(-150)
-        robot.stop()
-        DriveTillDouble(7, -500)
-        bremsen()
-        motor_left.run_angle(-500, -300)
-        robot.straight(35)
+    while True:
+        # Lila, rechte Seite + rechts
+        if whichColor == "purple":
+            robot.turn(-10)
+            robot.stop()
+            fahren(500)
+            time.sleep(3.5)
+            robot.stop()
+            robot.straight(-150)
+            robot.turn(90)
+            robot.straight(-125)
+            robot.stop()
+            DriveTillDouble(7, -500)
+            bremsen()
+            motor_left.run_angle(-500, -300)
+            robot.straight(-35)
         
-        front_grabber_bottom.run_angle(125, -225)
-        front_grabber_top.run_angle(-125, 50)
-    # Grün , linke Seite + rechts
-    elif whichColor == "green":
-        robot.turn(180)
-        fahren(500)
-        time.sleep(3.5)
-        robot.stop()
-        robot.straight(-150)
-        robot.turn(-90)
-        robot.straight(-150)
-        robot.stop()
-        DriveTillDouble(7, -500)
-        bremsen()
-        motor_left.run_angle(-500, -300)
-        robot.straight(35)
+            front_grabber_bottom.run_angle(125, -225)
+            front_grabber_top.run_angle(-125, 50)
+            time.sleep(0.5)
+            front_grabber_top.run_angle(125, 50)
+            front_grabber_bottom.run_angle(125, 225)
+            robot.turn(35)
+            robot.straight(100)
+            robot.turn(90)
+            robot.straight(-300)
+            robot.turn(90)
+            return
+        
+        # Grün , linke Seite + rechts
+        elif whichColor == "green":
+            robot.turn(190)
+            robot.stop()
+            fahren(500)
+            time.sleep(3.5)
+            robot.stop()
+            robot.straight(-150)
+            robot.turn(-90)
+            robot.straight(-125)
+            robot.stop()
+            DriveTillDouble(7, -500)
+            bremsen()
+            motor_left.run_angle(-500, -300)
+            robot.straight(-35)
 
-        front_grabber_bottom.run_angle(125, -225)
-        front_grabber_top.run_angle(-125, 50)
-        # Orange (und nichts) , rechts Seite + rechts
-    else:
-        fahren(500)
-        time.sleep(3.5)
-        robot.stop()
-        robot.straight(-150)
-        robot.turn(90)
-        robot.straight(-150)
-        robot.stop()
-        DriveTillDouble(7, -500)
-        bremsen()
-        motor_right.run_angle(-500, -300)
-        robot.straight(35)
+            front_grabber_bottom.run_angle(125, -225)
+            front_grabber_top.run_angle(-125, 50)
+            time.sleep(0.5)
+            front_grabber_top.run_angle(125, 50)
+            front_grabber_bottom.run_angle(125, 225)
+            robot.turn(35)
+            robot.straight(100)
+            robot.turn(-90)
+            robot.straight(-300)
+            robot.turn(-90)
+            return
+        
+        # Orange, rechts Seite + rechts
+        elif whichColor == "orange":
+            robot.turn(-10)
+            robot.stop()
+            fahren(500)
+            time.sleep(3.5)
+            robot.stop()
+            robot.straight(-150)
+            robot.turn(90)
+            robot.straight(-125)
+            robot.stop()
+            DriveTillDouble(7, -500)
+            bremsen()
+            motor_right.run_angle(-500, -300)
+            robot.straight(35)
 
-        front_grabber_bottom.run_angle(125, -225)
-        front_grabber_top.run_angle(-125, 50)
+            front_grabber_bottom.run_angle(125, -225)
+            front_grabber_top.run_angle(-125, 50)
+            time.sleep(0.5)
+            front_grabber_top.run_angle(125, 50)
+            front_grabber_bottom.run_angle(125, 225)
+            robot.turn(-35)
+            robot.straight(100)
+            robot.turn(90)
+            robot.straight(-300)
+            robot.turn(90)
+            return
+        
+        # Nichts, rechts Seite + rechts
+        else:
+            robot.straight(-10)
+            robot.turn(90)
+            isMiddle = KisteErkennen()
 
+            if isMiddle == True:
+                robot.stop()
+                front_grabber_top.run_angle(-300, 65)
+
+                robot.straight(-185)
+                robot.straight(25)
+                front_grabber_bottom.run_time(-550, 1400)
+                #front_grabber_bottom.run_angle(200, 5, then=Stop.HOLD)
+                front_grabber_top.run_time(550, 525)
+                front_grabber_bottom.run_time(125, 1800, then=Stop.COAST)
+
+                ## Tütchen analysieren ##
+                robot.straight(200)
+                robot.turn(-90)
+                front_grabber_bottom.run_angle(125, -200)
+
+                detectedColor = BonbonErkennen()
+                print("Erkannte Farbe:", detectedColor)
+                ev3.speaker.beep()
+                front_grabber_bottom.run_time(125, 1800, then=Stop.COAST)
+                front_grabber_bottom.stop()
+                robot.stop()
+                robot.turn(-35)
+                robot.straight(-300)
+                robot.turn(-90)
+                if detectedColor != None:
+                    return
             
 def checkUp():
     robot.straight(-100)
@@ -313,7 +384,7 @@ DriveTillDouble(7, 400)
 bremsen()
 robot.straight(75)
 wait(100)
-robot.turn(90)
+robot.turn(91)
 robot.straight(575)
 robot.stop()
 DriveTillColor("right", 7, 400)
@@ -321,6 +392,7 @@ bremsen()
 wait(100)
 robot.straight(50)
 robot.stop()
+wait(100)
 LineFollower_tillDouble()
 bremsen()
 wait(100)
@@ -335,9 +407,9 @@ while True:
         robot.stop()
         front_grabber_top.run_angle(-300, 65)
 
-        robot.straight(-185)
+        robot.straight(-200)
         robot.straight(25)
-        front_grabber_bottom.run_time(-550, 1300)
+        front_grabber_bottom.run_time(-550, 1400)
         #front_grabber_bottom.run_angle(200, 5, then=Stop.HOLD)
         front_grabber_top.run_time(550, 525)
         front_grabber_bottom.run_time(125, 1800, then=Stop.COAST)
@@ -355,7 +427,3 @@ while True:
         robot.stop()
 
         driveToPlace(detectedColor)
-        robot.stop()
-        time.sleep(1)
-        front_grabber_top.run_angle(125, 50)
-        front_grabber_bottom.run_time(125, 1800, then=Stop.COAST)
