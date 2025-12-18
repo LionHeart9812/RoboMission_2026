@@ -115,6 +115,7 @@ def BonbonErkennen():
             
 
 def driveToPlace(whichColor):
+    driveDistance = -500
     while True:
         # Lila, rechte Seite + rechts
         if whichColor == "purple":
@@ -137,15 +138,16 @@ def driveToPlace(whichColor):
             time.sleep(0.5)
             front_grabber_top.run_angle(125, 50)
             front_grabber_bottom.run_angle(125, 225)
-            robot.turn(-55)
+            robot.turn(-60)
+            robot.stop()
             fahren(500)
-            time.sleep(3.5)
+            time.sleep(1.5)
             bremsen()
-            robot.straight(-100)
+            robot.straight(driveDistance)
             robot.turn(-90)
-            robot.straight(-100)
+            robot.straight(driveDistance)
             robot.turn(-90)
-            robot.straight(-300)
+            robot.straight(driveDistance)
             robot.stop()
             return
         
@@ -170,13 +172,15 @@ def driveToPlace(whichColor):
             time.sleep(0.5)
             front_grabber_top.run_angle(125, 50)
             front_grabber_bottom.run_angle(125, 225)
-            robot.turn(-125)
+            robot.turn(-130)
+            robot.stop()
             fahren(500)
-            time.sleep(3.5)
+            time.sleep(1.5)
+            bremsen()
             robot.turn(90)
-            robot.straight(-100)
+            robot.straight(driveDistance)
             robot.turn(90)
-            robot.straight(-300)
+            robot.straight(driveDistance)
             robot.turn(90)
             robot.stop()
             return
@@ -202,14 +206,16 @@ def driveToPlace(whichColor):
             time.sleep(0.5)
             front_grabber_top.run_angle(125, 50)
             front_grabber_bottom.run_angle(125, 225)
-            robot.turn(-35)
+            robot.turn(-40)
+            robot.stop()
             fahren(500)
-            time.sleep(3.5)
-            robot.straight(-100)
+            time.sleep(1.5)
+            bremsen()
+            robot.straight(driveDistance)
             robot.turn(-90)
-            robot.straight(-100)
+            robot.straight(driveDistance)
             robot.turn(-90)
-            robot.straight(-300)
+            robot.straight(driveDistance)
             robot.stop()
             return
         
