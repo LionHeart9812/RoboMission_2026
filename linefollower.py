@@ -16,10 +16,6 @@ import time
 ev3 = EV3Brick()
 motor_left = Motor(Port.D, positive_direction=Direction.COUNTERCLOCKWISE)
 motor_right = Motor(Port.A, positive_direction=Direction.CLOCKWISE)
-# Negativ: Runter; Positiv: Hoch
-front_grabber_bottom = Motor(Port.C, positive_direction=Direction.COUNTERCLOCKWISE)
-# Negativ: Zu; Positiv: Auf
-front_grabber_top = Motor(Port.B, positive_direction=Direction.CLOCKWISE)
 colorSensor_left = ColorSensor(Port.S1)
 colorSensor_right = ColorSensor(Port.S4)
 colorReflection_left =  colorSensor_left.reflection()
@@ -36,27 +32,29 @@ robot = DriveBase(motor_left, motor_right, wheel_diameter=60, axle_track=199)
 # Einstellungen variable("robot")
 robot.settings(600, 550, 200, 150)
 
-#Fahren ohne DriveBase --> Etwas genauer anhalten, aber keine Distanz
 def fahren(speeder):
-    motor_left.run(speeder)
-    motor_right.run(speeder)
-
+    robot.drive(speeder/7, 0)
+    time.sleep(0.25)
+    robot.drive(speeder/5, 0)
+    time.sleep(0.25)
+    robot.drive(speeder/2, 0)
+    time.sleep(0.25)
+    robot.drive(speeder, 0)
 
 def bremsen():
-    motor_left.stop()
-    motor_right.stop()
+    robot.stop()
 
 # Fahren bis zur einer doppelten schwarzen Linie
 def DriveTillDouble(colorIndex, speed):
     colorReflection_left =  colorSensor_left.reflection()
     colorReflection_right = colorSensor_right.reflection()
     seenBlack = 0
+    fahren(speed)
 
     while seenBlack == 0: 
         colorReflection_left =  colorSensor_left.reflection()
         colorReflection_right = colorSensor_right.reflection()
         # Einfach gerade aus fahren mit bestimmter Geschwindigkeit (speed)
-        fahren(speed)
         # Wenn beide Farbsensoren eine bestimmte Farbe (colorIndex) sehen, dann stoppen
         if colorReflection_left < colorIndex + 3 and colorReflection_left > colorIndex - 3 and colorReflection_right < colorIndex + 3 and colorReflection_right > colorIndex - 3:
             bremsen()
@@ -70,11 +68,11 @@ def DriveTillColor(whichSensor, colorIndex, speed):
     if whichSensor == "left":
         colorReflection_left =  colorSensor_left.reflection()
         seenBlack = 0
+        fahren(speed)
 
         while seenBlack == 0: 
             colorReflection_left =  colorSensor_left.reflection()
             # Einfach gerade aus fahren mit variable speed
-            fahren(speed)
             # Wenn ein ausgewählter (whichsensor) Farbsenor eine bestimmte Farbe (colorIndex) sieht, dann stoppen
             if colorReflection_left < colorIndex + 3 and colorReflection_left > colorIndex - 3:
                 bremsen()
@@ -86,11 +84,11 @@ def DriveTillColor(whichSensor, colorIndex, speed):
     elif whichSensor == "right":
         colorReflection_right =  colorSensor_right.reflection()
         seenBlack = 0
+        fahren(speed)
 
         while seenBlack == 0: 
             colorReflection_right =  colorSensor_right.reflection()
             # Einfach gerade aus fahren mit variable speed
-            fahren(speed)
             # Wenn ein ausgewählter (whichsensor) Farbsenor eine bestimmte Farbe (colorIndex) sieht, dann stoppen
             if colorReflection_right < colorIndex + 3 and colorReflection_right > colorIndex - 3:
                 bremsen()
