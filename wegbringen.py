@@ -9,7 +9,6 @@ from pybricks.media.ev3dev import SoundFile, ImageFile
 from pixycamev3.pixy2 import Pixy2
 import time
 from linefollower import DriveTillDouble, DriveTillColor, LineFollower_tillDouble
-from wegbringen import red
 
 # This program requires LEGO EV3 MicroPython v2.0 or higher.
 # Click "Open user guide" on the EV3 extension tab for more information.
@@ -27,13 +26,6 @@ colorReflection_left =  colorSensor_left.reflection()
 colorReflection_right = colorSensor_right.reflection()
 pixy = Pixy2(port=2, i2c_address=0x54)
 
-seenBlack = 0
-i = 1
-lastDirection = "none"
-
-# Write your program here.
-ev3.speaker.beep()
-
 #Gestell des Roboters (Durchmessser der Reifen, Radstand)
 robot = DriveBase(motor_left, motor_right, wheel_diameter=60, axle_track=199)
 
@@ -48,63 +40,30 @@ def fahren(speeder):
     robot.drive(speeder, 0)
 
 # Auf: positiv; Zu: negativ
-def grabben(speeder, timerMS):
+def grabben(speeder, timerS):
     grabber_left.run(speeder)
     grabber_right.run(speeder)
-    wait(timerMS)
+    time.sleep(timerS)
     grabber_left.hold()
     grabber_right.hold()
-            
-def RitterErkennen():
-    start = time.time()
-    pixy.set_lamp(1, 1)
-    fahren(100)
 
-    while time.time() - start < 7:
-        nr_blocks, blocks = pixy.get_blocks(0x0F, 3)
-        print("Detected Blocks:", nr_blocks)
-
-        if nr_blocks >= 1:
-            for b in blocks[:nr_blocks]:
-                if b.sig == 1 and b.height >= 15:
-                    return "red"
-                elif b.sig == 2 and b.height >= 15:
-                    return "yellow"
-                elif b.sig == 3 and b.height >= 15:
-                    return "green"
-                elif b.sig == 4 and b.height >= 15:
-                    return "blue"
-
-    # Wenn in der Zeitspanne nichts Passendes erkannt wurde
-    robot.stop()
-    return None
-            
-def checkUp():
+# Erstellen der funktionen
+def red():
+    robot.straight(140)
+    robot.turn(90)
+    grabben(-100, .15)
+    robot.straight(100)
+    grabben(-150, 1)
     robot.straight(-100)
-    wait(100)
-    robot.turn(90)
-    wait(250)
-    robot.turn(90)
-    wait(250)
-    robot.turn(90)
-    wait(250)
-    robot.turn(90)
-    wait(250)
-    robot.straight(90)
-    time.sleep(100)
+    robot.turn(-89)
+    DriveTillColor("left", 7, 250)
+    time.sleep(.1)
 
-##---------------------------- Fahrprogramm ----------------------------##
-## Anfahren ##
-robot.turn(-45)
-robot.straight(125)
-robot.turn(45)
-robot.straight(75)
-robot.stop()
-detectedColor = RitterErkennen()
-print(detectedColor)
-robot.stop()
-ev3.speaker.beep()
-time.sleep(0.25)
+    robot.straight(-65)
+    robot.turn(-89)
+    robot.straight(135)
+    grabben(150, 1)
+    DriveTillDouble(7, -150)
+    time.sleep(.1)
 
-if detectedColor == "red":
-    red()
+    robot.straight(50)
