@@ -8,12 +8,11 @@ from pybricks.robotics import DriveBase
 from pybricks.media.ev3dev import SoundFile, ImageFile
 from pixycamev3.pixy2 import Pixy2
 import time
-from linefollower import DriveTillDouble, DriveTillColor, LineFollower_tillDouble
-from wegbringen import red
+from linefollower import DriveTillDouble, DriveTillColor, LineFollower_tillDouble, LineFollower_tillTime
+from wegbringen import red, yellow, blue, green
 
 # This program requires LEGO EV3 MicroPython v2.0 or higher.
 # Click "Open user guide" on the EV3 extension tab for more information.
-
 
 # Create your objects here.
 ev3 = EV3Brick()
@@ -41,10 +40,8 @@ robot = DriveBase(motor_left, motor_right, wheel_diameter=60, axle_track=199)
 robot.settings(600, 550, 200, 150)
 
 def fahren(speeder):
-    robot.drive(speeder/5, 0)
-    time.sleep(0.25)
     robot.drive(speeder/2, 0)
-    time.sleep(0.25)
+    time.sleep(.2)
     robot.drive(speeder, 0)
 
 # Auf: positiv; Zu: negativ
@@ -62,17 +59,20 @@ def RitterErkennen():
 
     while time.time() - start < 7:
         nr_blocks, blocks = pixy.get_blocks(0x0F, 3)
-        print("Detected Blocks:", nr_blocks)
 
         if nr_blocks >= 1:
             for b in blocks[:nr_blocks]:
-                if b.sig == 1 and b.height >= 15:
+                if b.sig == 1 and b.height >= 18:
+                    print("Höhe des Farbe:", b.height)
                     return "red"
-                elif b.sig == 2 and b.height >= 15:
+                elif b.sig == 2 and b.height >= 18:
+                    print("Höhe des Farbe:", b.height)
                     return "yellow"
-                elif b.sig == 3 and b.height >= 15:
+                elif b.sig == 3 and b.height >= 18:
+                    print("Höhe des Farbe:", b.height)
                     return "green"
-                elif b.sig == 4 and b.height >= 15:
+                elif b.sig == 4 and b.height >= 18:
+                    print("Höhe des Farbe:", b.height)
                     return "blue"
 
     # Wenn in der Zeitspanne nichts Passendes erkannt wurde
@@ -100,11 +100,20 @@ robot.straight(125)
 robot.turn(45)
 robot.straight(75)
 robot.stop()
-detectedColor = RitterErkennen()
-print(detectedColor)
-robot.stop()
-ev3.speaker.beep()
-time.sleep(0.25)
 
-if detectedColor == "red":
-    red()
+while True:
+    detectedColor = RitterErkennen()
+    print(detectedColor)
+    print("---------------------------")
+    robot.stop()
+    ev3.speaker.beep()
+    time.sleep(0.25)
+
+    if detectedColor == "red":
+        red()
+    elif detectedColor == "yellow":
+        yellow()
+    elif detectedColor == "blue":
+        blue()
+    elif detectedColor == "green":
+        green()
