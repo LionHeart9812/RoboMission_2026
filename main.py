@@ -17,7 +17,7 @@ from linefollower import DriveTillDouble, DriveTillColor, LineFollower_tillDoubl
 ev3 = EV3Brick()
 motor_left = Motor(Port.D, positive_direction=Direction.COUNTERCLOCKWISE)
 motor_right = Motor(Port.A, positive_direction=Direction.CLOCKWISE)
-grabber_left = Motor(Port.C, positive_direction=Direction.COUNTERCLOCKWISE)
+grabber_left = Motor(Port.C, positive_direction=Direction.CLOCKWISE)
 grabber_right = Motor(Port.B, positive_direction=Direction.COUNTERCLOCKWISE)
 colorSensor_left = ColorSensor(Port.S1)
 colorSensor_right = ColorSensor(Port.S4)
@@ -33,6 +33,7 @@ lastDirection = "none"
 ev3.speaker.beep()
 
 #Gestell des Roboters (Durchmessser der Reifen, Radstand)
+# Bens Werte: Wheel diameter 60; axle Track 183
 robot = DriveBase(motor_left, motor_right, wheel_diameter=60, axle_track=199)
 
 # Einstellungen variable("robot")
@@ -52,3 +53,4 @@ def grabben(speeder, timerMS):
     grabber_right.hold()
             
 # Test
+grabben(150, 1500)
