@@ -8,7 +8,7 @@ from pybricks.robotics import DriveBase
 from pybricks.media.ev3dev import SoundFile, ImageFile
 from pixycamev3.pixy2 import Pixy2
 import time
-from linefollower import DriveTillDouble, DriveTillColor, LineFollower_tillDouble, LineFollower_tillTime
+from linefollower import *
 
 # This program requires LEGO EV3 MicroPython v2.0 or higher.
 # Click "Open user guide" on the EV3 extension tab for more information.
@@ -17,8 +17,8 @@ from linefollower import DriveTillDouble, DriveTillColor, LineFollower_tillDoubl
 ev3 = EV3Brick()
 motor_left = Motor(Port.D, positive_direction=Direction.COUNTERCLOCKWISE)
 motor_right = Motor(Port.A, positive_direction=Direction.CLOCKWISE)
-grabber_left = Motor(Port.C, positive_direction=Direction.CLOCKWISE)
-grabber_right = Motor(Port.B, positive_direction=Direction.COUNTERCLOCKWISE)
+lifter = Motor(Port.B, positive_direction=Direction.CLOCKWISE)
+grabber = Motor(Port.C, positive_direction=Direction.COUNTERCLOCKWISE)
 colorSensor_left = ColorSensor(Port.S1)
 colorSensor_right = ColorSensor(Port.S4)
 colorReflection_left =  colorSensor_left.reflection()
@@ -43,13 +43,6 @@ def fahren(speeder):
     robot.drive(speeder/2, 0)
     time.sleep(.2)
     robot.drive(speeder, 0)
-
-# Auf: positiv; Zu: negativ
-def grabben(speeder, timerMS):
-    grabber_left.run(speeder)
-    grabber_right.run(speeder)
-    wait(timerMS)
-    grabber_left.hold()
-    grabber_right.hold()
             
 # --- main programm --- #
+LF_tillDoubleNEW(7, 35)

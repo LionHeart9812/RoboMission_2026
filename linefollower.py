@@ -93,7 +93,7 @@ def DriveTillColor(whichSensor, colorIndex, speed):
 
 
 #Linienfolger mit Bedingung --> Bis zu einer doppelten schwarzen Linie
-def LineFollower_tillDouble():
+def LF_tillDoubleBlack():
     colorReflection_left =  colorSensor_left.reflection()
     colorReflection_right = colorSensor_right.reflection()
     seenBlack = 0
@@ -169,7 +169,7 @@ def LineFollower_tillDouble():
                     seeingNothing = False
 
 #Linienfolger mit Bedingung --> Bis Zeit vrbei ist
-def LineFollower_tillTime(timer):
+def LF_tillTime(timer):
     colorReflection_left = colorSensor_left.reflection()
     colorReflection_right = colorSensor_right.reflection()
     seenBlack = 0
@@ -259,3 +259,32 @@ def LineFollower_tillTime(timer):
 
     # Sicherheit: nach Ablauf der Zeit stoppen
     robot.stop()
+
+def LF_tillDoubleNEW(colorIndex, speed):
+    colorReflection_left =  colorSensor_left.reflection()
+    colorReflection_right = colorSensor_right.reflection()
+    seenBlack = 0
+    
+
+    while seenBlack == 0: 
+        colorReflection_left =  colorSensor_left.reflection()
+        colorReflection_right = colorSensor_right.reflection()
+        
+        # Linienfolger
+        correctionLeft = round((colorReflection_left + speed) * 0.5)
+        correctionRight = round((colorReflection_right + speed) * 0.5)
+
+        motor_left.dc(correctionLeft)
+        motor_right.dc(correctionRight)
+        print("Linkes:", correctionLeft)
+        print("Rechtes:", correctionRight)
+
+        # Wenn beide Farbsensoren eine bestimmte Farbe (colorIndex) sehen, dann stoppen
+        if colorReflection_left < colorIndex + 3 and colorReflection_left > colorIndex - 3 and colorReflection_right < colorIndex + 3 and colorReflection_right > colorIndex - 3:
+            motor_left.stop()
+            motor_right.stop()
+            ev3.speaker.beep()
+            print("color sensor left: " + str(colorReflection_left))
+            print("color sensor right: " + str(colorReflection_right))
+            print("----------------------------")
+            seenBlack = 1
