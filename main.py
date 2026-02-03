@@ -52,5 +52,4 @@ def grabben(speeder, timerMS):
     grabber_left.hold()
     grabber_right.hold()
             
-# Test
-grabben(150, 1500)
+# --- main programm --- #
