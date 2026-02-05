@@ -44,7 +44,9 @@ def fahren(speeder):
     time.sleep(.2)
     robot.drive(speeder, 0)
             
-# --- main programm --- #
-LF_tillDoubleNEW(7, 35)
-
-#Just added the venv folder
+# --- Main programm --- #
+stop_at_black_line(2.5, 0.2, 8)
+robot.straight(350)
+robot.stop()
+wait(100)
+stop_at_black_line(2.5, 0.2, 25)

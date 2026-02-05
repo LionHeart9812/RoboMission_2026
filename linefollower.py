@@ -271,13 +271,13 @@ def LF_tillDoubleNEW(colorIndex, speed):
         colorReflection_right = colorSensor_right.reflection()
         
         # Linienfolger
-        correctionLeft = round((colorReflection_left + speed) * 0.5)
-        correctionRight = round((colorReflection_right + speed) * 0.5)
+        correctionLeft = max(35, round(colorReflection_right * speed))
+        correctionRight = max(35, round(colorReflection_left * speed))
 
         motor_left.dc(correctionLeft)
         motor_right.dc(correctionRight)
-        print("Linkes:", correctionLeft)
-        print("Rechtes:", correctionRight)
+        # print("Linkes:", correctionLeft)
+        # print("Rechtes:", correctionRight)
 
         # Wenn beide Farbsensoren eine bestimmte Farbe (colorIndex) sehen, dann stoppen
         if colorReflection_left < colorIndex + 3 and colorReflection_left > colorIndex - 3 and colorReflection_right < colorIndex + 3 and colorReflection_right > colorIndex - 3:
@@ -288,3 +288,40 @@ def LF_tillDoubleNEW(colorIndex, speed):
             print("color sensor right: " + str(colorReflection_right))
             print("----------------------------")
             seenBlack = 1
+
+def stop_at_black_line(correctionStrength, correctionRemember, colorIndex):
+    last_error = 0
+    speed_left = 0
+    speed_right = 0
+    left_ref = colorSensor_left.reflection()
+    right_ref = colorSensor_right.reflection()
+
+    LINE_SPEED = 200 # Basic Geschwindigkeit
+    TURN_SPEED = 800 # Drehgeschwindigkeit
+
+
+    while True:
+        left_ref = colorSensor_left.reflection()
+        right_ref = colorSensor_right.reflection()
+        if left_ref <= colorIndex and right_ref <= colorIndex:
+            motor_left.stop(Stop.BRAKE)
+            motor_right.stop(Stop.BRAKE)
+            break
+
+        # Line following logic
+        error = left_ref - right_ref
+        derivative = error - last_error
+        correction = correctionStrength * error + correctionRemember * derivative
+        last_error = error
+
+        speed_left = max(min(LINE_SPEED + correction, TURN_SPEED), -TURN_SPEED)
+        speed_right = max(min(LINE_SPEED - correction, TURN_SPEED), -TURN_SPEED)
+
+        motor_left.run(speed_left)
+        motor_right.run(speed_right)
+        wait(5)
+    motor_left.run(0)
+    motor_right.run(0)
+    wait(10)
+    motor_left.stop()
+    motor_right.stop()
