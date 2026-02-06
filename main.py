@@ -45,8 +45,8 @@ def fahren(speeder):
     robot.drive(speeder, 0)
             
 # --- Main programm --- #
-stop_at_black_line(2.5, 0.2, 8)
+LF_StopBlack(2.5, 0.2, 8)
 robot.straight(350)
 robot.stop()
 wait(100)
-stop_at_black_line(2.5, 0.2, 25)
+LF_StopBlack(2.5, 0.2, 25)
