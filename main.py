@@ -35,7 +35,7 @@ seenBlack = 0
 ev3.speaker.beep()
 
 #Gestell des Roboters (Durchmessser der Reifen, Radstand)
-robot = DriveBase(motor_left, motor_right, wheel_diameter=60, axle_track=198)
+robot = DriveBase(motor_left, motor_right, wheel_diameter=60, axle_track=199)
 robot.settings(500, 375, 250, 125)
 
 # Fahren ohne Distanz
@@ -58,13 +58,13 @@ DriveTillColor("left", 7, 150)
 robot.straight(25)
 robot.turn(-90)
 DriveTillColor("right", 7, 150)
-robot.straight(35)
+robot.straight(25)
 
 robot.turn(92)
-grabber.run_angle(-250, 280)
+grabber.run_angle(-250, 290)
 robot.straight(155)
 robot.straight(-10)
-grabber.run_time(250, 650, then=Stop.HOLD)
+grabber.run_time(250, 700, then=Stop.HOLD)
 
 robot.straight(-60)
 DriveTillDouble(7, -100)
@@ -76,7 +76,7 @@ robot.straight(50)
 robot.turn(90)
 DriveTillColor("left", 7, 300)
 
-robot.straight(-40)
+robot.straight(-30)
 robot.turn(-90)
 robot.straight(125)
 robot.stop()
@@ -89,8 +89,13 @@ robot.turn(90)
 robot.straight(100)
 robot.turn(-90)
 grabber.run_angle(250, 200)
-robot.straight(150)
-grabber.run_time(250, 175, then=Stop.HOLD)
+robot.straight(160)
+robot.straight(-15)
+grabber.run_time(-250, 625, then=Stop.HOLD)
+lifter.run_time(-400, 1500, then=Stop.HOLD)
+robot.straight(-100)
+robot.turn(90)
+robot.straight(100)
 
 
 # --- Fahren durch die Mitte --- #

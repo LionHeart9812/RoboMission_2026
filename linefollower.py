@@ -64,7 +64,6 @@ def DriveTillDouble(colorIndex, speed):
             print("color sensor left: " + str(colorReflection_left))
             print("color sensor right: " + str(colorReflection_right))
             print("----------------------------")
-            wait(300)
             seenBlack = 1
 
 def DriveTillColor(whichSensor, colorIndex, speed):
@@ -98,7 +97,6 @@ def DriveTillColor(whichSensor, colorIndex, speed):
                 ev3.speaker.beep()
                 print("color sensor left: " + str(colorReflection_right))
                 print("----------------------------")
-                wait(300)
                 seenBlack = 1
 
 
