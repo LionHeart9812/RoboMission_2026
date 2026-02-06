@@ -32,11 +32,19 @@ robot = DriveBase(motor_left, motor_right, wheel_diameter=60, axle_track=199)
 # Einstellungen variable("robot")
 robot.settings(600, 550, 200, 150)
 
+# Fahren ohne Distanz
 def fahren(speeder):
+    if speeder >= 200:
+        robot.drive(speeder/3, 0)
+        time.sleep(.5)
+        
+    robot.drive(speeder/1.5, 0)
+    time.sleep(.75)
     robot.drive(speeder, 0)
 
 def bremsen():
     robot.stop()
+    wait(500)
 
 # Fahren bis zur einer doppelten schwarzen Linie
 def DriveTillDouble(colorIndex, speed):
@@ -56,6 +64,7 @@ def DriveTillDouble(colorIndex, speed):
             print("color sensor left: " + str(colorReflection_left))
             print("color sensor right: " + str(colorReflection_right))
             print("----------------------------")
+            wait(300)
             seenBlack = 1
 
 def DriveTillColor(whichSensor, colorIndex, speed):
@@ -89,6 +98,7 @@ def DriveTillColor(whichSensor, colorIndex, speed):
                 ev3.speaker.beep()
                 print("color sensor left: " + str(colorReflection_right))
                 print("----------------------------")
+                wait(300)
                 seenBlack = 1
 
 
