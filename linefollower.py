@@ -44,7 +44,7 @@ def fahren(speeder):
 
 def bremsen():
     robot.stop()
-    wait(500)
+    wait(50)
 
 # Fahren bis zur einer doppelten schwarzen Linie
 def DriveTillDouble(colorIndex, speed):
