@@ -50,28 +50,23 @@ def fahren(speeder):
 
 # Normale Werte für KP und KD
 # LF_StopBlack(2.5, 0.2, 8)
+
+# Funktionen für Multithreading
             
 # ------------------ Main programm ------------------ #
-grabber.run_angle(-200, 400)
-lifter.run_time(-100, 2000)
-robot.straight(150)
-time.sleep(1)
-lifter.run_time(100, 1000)
-grabber.run_time(200, 1500)
-time.sleep(10)
 # --- Türme stacken --- #
+grabber.run_time(400, 5000, then=Stop.HOLD, wait=False)
 robot.straight(140)
 DriveTillColor("left", 7, 150)
 robot.straight(25)
 robot.turn(-90)
 DriveTillColor("right", 7, 150)
-robot.straight(25)
+robot.straight(40)
 
 robot.turn(93)
-grabber.run_angle(-250, 290)
 robot.straight(155)
 robot.straight(-10)
-grabber.run_time(250, 700, then=Stop.HOLD)
+grabber.run_time(-400, 3000, then=Stop.HOLD)
 
 robot.straight(-60)
 DriveTillDouble(7, -100)
@@ -98,13 +93,17 @@ robot.turn(-90)
 grabber.run_angle(250, 200)
 robot.straight(160)
 robot.straight(-15)
-grabber.run_time(-250, 1000, then=Stop.HOLD)
-lifter.run_time(-1000, 2000, then=Stop.HOLD)
+
+grabber.run_time(-150, 1400, then=Stop.HOLD)
+lifter.run_time(-800, 400, then=Stop.HOLD)
+
 robot.straight(-70)
 robot.turn(90)
 robot.straight(150)
-lifter.run_time(500, 500, then=Stop.HOLD)
-grabber.run_time(250, 1000, then=Stop.HOLD)
+
+lifter.run_time(200, 400, then=Stop.HOLD)
+grabber.run_time(250, 750, then=Stop.HOLD)
+
 robot.straight(-200)
 
 
