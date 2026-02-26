@@ -13,7 +13,7 @@ from linefollower import *
 # This program requires LEGO EV3 MicroPython v2.0 or higher.
 # Click "Open user guide" on the EV3 extension tab for more information.
 
-# Create your objects here.
+# Create your objects here./Studiengang: Türme erichten
 ev3 = EV3Brick()
 
 motor_left = Motor(Port.D, positive_direction=Direction.COUNTERCLOCKWISE)
@@ -34,7 +34,7 @@ seenBlack = 0
 
 ev3.speaker.beep()
 
-#Gestell des Roboters (Durchmessser der Reifen, Radstand)
+#Gestell des Roboters (Durchmessser der Reifen, Radstand)-hahaha
 robot = DriveBase(motor_left, motor_right, wheel_diameter=60, axle_track=199)
 robot.settings(500, 375, 250, 125)
 
@@ -55,57 +55,66 @@ def fahren(speeder):
             
 # ------------------ Main programm ------------------ #
 # --- Türme stacken --- #
-grabber.run_time(400, 5000, then=Stop.HOLD, wait=False)
+# grabber.run_time(400, 5000, then=Stop.HOLD, wait=False)
+lifter.run_time(-200, 300, then=Stop.HOLD)
 robot.straight(140)
 DriveTillColor("left", 7, 150)
-robot.straight(25)
-robot.turn(-90)
+robot.stop()
+robot.straight(35)
+robot.turn(-89)
 DriveTillColor("right", 7, 150)
-robot.straight(40)
+robot.stop()
+robot.straight(10)
+robot.turn(91)
 
-robot.turn(93)
-robot.straight(155)
-robot.straight(-10)
-grabber.run_time(-400, 3000, then=Stop.HOLD)
+# In beide Türme reinfahren
+robot.straight(150)
+lifter.run_time(200, 75, then=Stop.COAST, wait=False)
+robot.straight(-20)
+grabber.run_time(-450, 5750, then=Stop.HOLD)
 
 robot.straight(-60)
 DriveTillDouble(7, -100)
+robot.stop()
 robot.turn(95)
 robot.straight(200)
-DriveTillDouble(7, 400)
+DriveTillDouble(7, 300)
 
 robot.straight(50)
 robot.turn(90)
-DriveTillColor("left", 7, 300)
+DriveTillColor("left", 7, 250)
+robot.stop()
 
+# Bro steht bei der Mittellinie
 robot.straight(-30)
 robot.turn(-90)
 robot.straight(125)
 robot.stop()
 LF_StopBlack(2.5, 0.2, 25)
-grabber.run_angle(-250, 150)
+grabber.run_time(400, 4750, wait=False)
+wait(2500)
 
 # Rechten Turm abstellen
+lifter.run_time(-200, 150, then=Stop.HOLD)
 robot.straight(-150)
+grabber.run_angle(-250, 3300, wait=False)
 robot.turn(90)
 robot.straight(100)
 robot.turn(-90)
-grabber.run_angle(250, 200)
 robot.straight(160)
-robot.straight(-15)
+robot.straight(-10)
 
-grabber.run_time(-150, 1400, then=Stop.HOLD)
-lifter.run_time(-800, 400, then=Stop.HOLD)
+grabber.run_time(450, 4250, then=Stop.HOLD)
+lifter.run_time(-250, 400, then=Stop.HOLD)
 
 robot.straight(-70)
 robot.turn(90)
 robot.straight(150)
 
-lifter.run_time(200, 400, then=Stop.HOLD)
-grabber.run_time(250, 750, then=Stop.HOLD)
+lifter.run_time(200, 200, then=Stop.HOLD)
+grabber.run_time(-250, 2000, then=Stop.HOLD)
 
 robot.straight(-200)
-
 
 # --- Fahren durch die Mitte --- #
 # LF_StopBlack(2.5, 0.2, 8)
