@@ -1,7 +1,7 @@
 from random import shuffle
 
-figures = ["rot", "blau", "gelb", "grün", "frei", "frei"]
-platzierungen = [1, 2, 3, 4, 5, 6]
+figures = ["rot", "blau", "gelb", "grün", "schwarz"]
+platzierungen = [1, 2, 3, 4, "nichts",]
 shuffle(platzierungen)
 
 print("Deine Platzierungen:")

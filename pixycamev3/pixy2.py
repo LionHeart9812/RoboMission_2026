@@ -20,7 +20,7 @@ Date    : December 22 2021
 Version : 1.10
 License : GNU General Public License v2
 
-Charmed Labs, www.charmedlabs.com
+Charmed Labs; www.charmedlabs.com
 """
 # Custom DataErrors:
 class Pixy2DataError(Exception):
