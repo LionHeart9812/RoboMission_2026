@@ -44,7 +44,7 @@ def fahren(speeder):
 
 def bremsen():
     robot.stop()
-    wait(50)
+    wait(25)
 
 # Fahren bis zur einer doppelten schwarzen Linie
 def DriveTillDouble(colorIndex, speed):
@@ -60,7 +60,6 @@ def DriveTillDouble(colorIndex, speed):
         # Wenn beide Farbsensoren eine bestimmte Farbe (colorIndex) sehen, dann stoppen
         if colorReflection_left < colorIndex + 3 and colorReflection_left > colorIndex - 3 and colorReflection_right < colorIndex + 3 and colorReflection_right > colorIndex - 3:
             bremsen()
-            ev3.speaker.beep()
             print("color sensor left: " + str(colorReflection_left))
             print("color sensor right: " + str(colorReflection_right))
             print("----------------------------")
@@ -78,7 +77,6 @@ def DriveTillColor(whichSensor, colorIndex, speed):
             # Wenn ein ausgewählter (whichsensor) Farbsenor eine bestimmte Farbe (colorIndex) sieht, dann stoppen
             if colorReflection_left < colorIndex + 3 and colorReflection_left > colorIndex - 3:
                 bremsen()
-                ev3.speaker.beep()
                 print("color sensor left: " + str(colorReflection_left))
                 print("----------------------------")
                 seenBlack = 1
@@ -94,7 +92,6 @@ def DriveTillColor(whichSensor, colorIndex, speed):
             # Wenn ein ausgewählter (whichsensor) Farbsenor eine bestimmte Farbe (colorIndex) sieht, dann stoppen
             if colorReflection_right < colorIndex + 3 and colorReflection_right > colorIndex - 3:
                 bremsen()
-                ev3.speaker.beep()
                 print("color sensor left: " + str(colorReflection_right))
                 print("----------------------------")
                 seenBlack = 1
@@ -131,9 +128,7 @@ def LF_tillDoubleBlack():
                 # Wenn beide schwarz stoppen
                 if colorReflection_right < 15 and colorReflection_left < 15 and seeingNothing == False:
                     seenBlack = 1
-                    robot.stop()
                     bremsen()
-                    ev3.speaker.beep()
                     print("color sensor left: " + str(colorReflection_left))
                     print("color sensor right: " + str(colorReflection_right))
                     print("----------------------------")
@@ -155,9 +150,7 @@ def LF_tillDoubleBlack():
                 # Wenn beide schwarz stoppen
                 if colorReflection_right < 15 and colorReflection_left < 15 and seeingNothing == False:
                     seenBlack = 1
-                    robot.stop()
                     bremsen()
-                    ev3.speaker.beep()
                     print("color sensor left: " + str(colorReflection_left))
                     print("color sensor right: " + str(colorReflection_right))
                     print("----------------------------")
@@ -212,9 +205,7 @@ def LF_tillTime(timer):
                      and not seeingNothing)
                         or time.time() - start > timer):
                     seenBlack = 1
-                    robot.stop()
                     bremsen()
-                    ev3.speaker.beep()
                     print("color sensor left: " + str(colorReflection_left))
                     print("color sensor right: " + str(colorReflection_right))
                     print("----------------------------")
@@ -238,9 +229,7 @@ def LF_tillTime(timer):
                      and not seeingNothing)
                         or time.time() - start > timer):
                     seenBlack = 1
-                    robot.stop()
                     bremsen()
-                    ev3.speaker.beep()
                     print("color sensor left: " + str(colorReflection_left))
                     print("color sensor right: " + str(colorReflection_right))
                     print("----------------------------")
