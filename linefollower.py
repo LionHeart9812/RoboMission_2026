@@ -34,9 +34,9 @@ robot.settings(600, 550, 200, 150)
 
 # Fahren ohne Distanz
 def fahren(speeder):
-    if speeder >= 200:
-        robot.drive(speeder/3, 0)
-        time.sleep(.5)
+    # if speeder >= 200:
+    #     robot.drive(speeder/3, 0)
+    #     time.sleep(.5)
         
     robot.drive(speeder/1.5, 0)
     time.sleep(.75)
@@ -96,176 +96,15 @@ def DriveTillColor(whichSensor, colorIndex, speed):
                 print("----------------------------")
                 seenBlack = 1
 
-
-#Linienfolger mit Bedingung --> Bis zu einer doppelten schwarzen Linie
-def LF_tillDoubleBlack():
-    colorReflection_left =  colorSensor_left.reflection()
-    colorReflection_right = colorSensor_right.reflection()
-    seenBlack = 0
-    seeingNothing = False
-
-    while seenBlack == 0:
-        colorReflection_left =  colorSensor_left.reflection()
-        colorReflection_right = colorSensor_right.reflection()
-
-        if colorReflection_left < 3 and colorReflection_right < 3 and seeingNothing == False:
-            seeingNothing = True
-
-        # Wenn linker Farbsensor auf schwarz, fahre etwas nach rechts
-        elif colorReflection_left < 15 and seeingNothing == False:
-            print("Links")
-            robot.stop()
-            while colorReflection_left < 15 and seenBlack == 0:
-                colorReflection_left =  colorSensor_left.reflection()
-                colorReflection_right = colorSensor_right.reflection()
-
-                robot.drive(100, -40)
-                seenBlack = 0
-
-                if colorReflection_left < 3 and colorReflection_right < 3:
-                    seeingNothing = True
-
-                # Wenn beide schwarz stoppen
-                if colorReflection_right < 15 and colorReflection_left < 15 and seeingNothing == False:
-                    seenBlack = 1
-                    bremsen()
-                    print("color sensor left: " + str(colorReflection_left))
-                    print("color sensor right: " + str(colorReflection_right))
-                    print("----------------------------")
-
-        # Wenn rechter, dann etwas nach links
-        elif colorReflection_right < 15 and seeingNothing == False:
-            print("Rechts")
-            robot.stop()
-            while colorReflection_right < 15 and seenBlack == 0:
-                colorReflection_left =  colorSensor_left.reflection()
-                colorReflection_right = colorSensor_right.reflection()
-
-                robot.drive(100, 40)
-                seenBlack = 0
-
-                if colorReflection_left < 3 and colorReflection_right < 3:
-                    seeingNothing = True
-
-                # Wenn beide schwarz stoppen
-                if colorReflection_right < 15 and colorReflection_left < 15 and seeingNothing == False:
-                    seenBlack = 1
-                    bremsen()
-                    print("color sensor left: " + str(colorReflection_left))
-                    print("color sensor right: " + str(colorReflection_right))
-                    print("----------------------------")
-
-        # Wenn kein Sensor auf schwarz, oder nichts erkennen, fahre geradeaus
-        elif colorReflection_right > 14 and colorReflection_left > 14 or seeingNothing == True:
-            robot.stop()
-            print("Geradeaus")
-            while colorReflection_right > 14 and colorReflection_left > 14 or seeingNothing == True:
-                colorReflection_left =  colorSensor_left.reflection()
-                colorReflection_right = colorSensor_right.reflection()
-
-                robot.drive(300, 0)
-                seenBlack = 0
-
-                if colorReflection_left > 2 or colorReflection_right > 2:
-                    seeingNothing = False
-
-#Linienfolger mit Bedingung --> Bis Zeit vrbei ist
-def LF_tillTime(timer):
-    colorReflection_left = colorSensor_left.reflection()
-    colorReflection_right = colorSensor_right.reflection()
-    seenBlack = 0
-    seeingNothing = False
-    start = time.time()
-
-    # läuft, bis entweder Schwarz gefunden wurde oder die Zeit abgelaufen ist
-    while seenBlack == 0 and time.time() - start <= timer:
-        colorReflection_left = colorSensor_left.reflection()
-        colorReflection_right = colorSensor_right.reflection()
-
-        # Beide Sensoren sehen sehr dunkel -> nichts / Unterbrechung
-        if colorReflection_left < 3 and colorReflection_right < 3 and not seeingNothing:
-            seeingNothing = True
-
-        # Linker Sensor auf Linie -> nach rechts korrigieren
-        elif colorReflection_left < 15 and not seeingNothing:
-            print("Links")
-            robot.stop()
-            while (colorReflection_left < 15 and seenBlack == 0 
-                   and time.time() - start <= timer):
-                colorReflection_left = colorSensor_left.reflection()
-                colorReflection_right = colorSensor_right.reflection()
-
-                robot.drive(100, -40)
-
-                if colorReflection_left < 3 and colorReflection_right < 3:
-                    seeingNothing = True
-
-                # Beide schwarz ODER Zeit vorbei -> stoppen
-                if ((colorReflection_right < 15 and colorReflection_left < 15 
-                     and not seeingNothing)
-                        or time.time() - start > timer):
-                    seenBlack = 1
-                    bremsen()
-                    print("color sensor left: " + str(colorReflection_left))
-                    print("color sensor right: " + str(colorReflection_right))
-                    print("----------------------------")
-
-        # Rechter Sensor auf Linie -> nach links korrigieren
-        elif colorReflection_right < 15 and not seeingNothing:
-            print("Rechts")
-            robot.stop()
-            while (colorReflection_right < 15 and seenBlack == 0 
-                   and time.time() - start <= timer):
-                colorReflection_left = colorSensor_left.reflection()
-                colorReflection_right = colorSensor_right.reflection()
-
-                robot.drive(100, 40)
-
-                if colorReflection_left < 3 and colorReflection_right < 3:
-                    seeingNothing = True
-
-                # Beide schwarz ODER Zeit vorbei -> stoppen
-                if ((colorReflection_right < 15 and colorReflection_left < 15 
-                     and not seeingNothing)
-                        or time.time() - start > timer):
-                    seenBlack = 1
-                    bremsen()
-                    print("color sensor left: " + str(colorReflection_left))
-                    print("color sensor right: " + str(colorReflection_right))
-                    print("----------------------------")
-
-        # Kein Sensor auf Linie ODER „nichts gesehen“ -> geradeaus suchen
-        elif (colorReflection_right > 14 and colorReflection_left > 14) or seeingNothing:
-            robot.stop()
-            print("Geradeaus")
-            while (((colorReflection_right > 14 and colorReflection_left > 14) 
-                    or seeingNothing)
-                   and seenBlack == 0
-                   and time.time() - start <= timer):
-
-                colorReflection_left = colorSensor_left.reflection()
-                colorReflection_right = colorSensor_right.reflection()
-
-                robot.drive(300, 0)
-
-                # Sobald wieder vernünftige Werte da sind, seeingNothing zurücksetzen
-                if colorReflection_left > 2 or colorReflection_right > 2:
-                    seeingNothing = False
-
-            robot.stop()
-
-    # Sicherheit: nach Ablauf der Zeit stoppen
-    robot.stop()
-
 # Liniefolger sehr Krass
-def LF_StopBlack(correctionStrength, correctionRemember, colorIndex):
+def LF_StopBlack(correctionStrength, correctionRemember, colorIndex, speed):
     last_error = 0
     speed_left = 0
     speed_right = 0
     left_ref = colorSensor_left.reflection()
     right_ref = colorSensor_right.reflection()
 
-    LINE_SPEED = 200 # Basic Geschwindigkeit
+    LINE_SPEED = speed # Basic Geschwindigkeit
     TURN_SPEED = 800 # Maximale Drehgeschwindigkeit
 
 
