@@ -49,6 +49,8 @@ def fahren(speeder):
     robot.drive(speeder, 0)
             
 # ------------------ Main programm ------------------ #
+# --- Blau + Schwarze Mensch nehmen --- #
+
 # --- Türme stacken --- #
 # grabber.run_time(400, 5000, then=Stop.HOLD, wait=False)
 lifter.run_time(-200, 300, then=Stop.HOLD, wait=False)
