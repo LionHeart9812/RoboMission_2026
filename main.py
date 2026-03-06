@@ -36,13 +36,13 @@ ev3.speaker.beep()
 
 #Gestell des Roboters (Durchmessser der Reifen, Radstand)-hahaha
 robot = DriveBase(motor_left, motor_right, wheel_diameter=60, axle_track=199)
-robot.settings(750, 550, 450, 300)
+robot.settings(750, 400, 450, 300)
 
 # Fahren ohne Distanz
 def fahren(speeder):
-    if speeder >= 200:
-        robot.drive(speeder/3, 0)
-        time.sleep(.5)
+    # if speeder >= 200:
+    #     robot.drive(speeder/3, 0)
+    #     time.sleep(.5)
 
     robot.drive(speeder/1.5, 0)
     time.sleep(.75)
@@ -52,7 +52,7 @@ def fahren(speeder):
 # --- Türme stacken --- #
 # grabber.run_time(400, 5000, then=Stop.HOLD, wait=False)
 lifter.run_time(-200, 300, then=Stop.HOLD, wait=False)
-robot.straight(200)
+robot.straight(195)
 robot.turn(94)
 DriveTillDouble(7, 250)
 
@@ -60,12 +60,12 @@ DriveTillDouble(7, 250)
 robot.straight(170)
 robot.straight(-20)
 lifter.run_time(200, 75, then=Stop.COAST, wait=False)
-grabber.run_time(-750, 3250, then=Stop.HOLD)
+grabber.run_time(-750, 3200, then=Stop.HOLD)
 
 robot.straight(-60)
-DriveTillDouble(7, -100)
+DriveTillDouble(7, -200)
 robot.stop()
-robot.turn(95)
+robot.turn(93)
 robot.straight(200)
 DriveTillDouble(7, 450)
 
@@ -74,9 +74,9 @@ DriveTillColor("left", 7, 300)
 robot.stop()
 
 # Bro steht bei der Mittellinie
-robot.straight(-20)
-robot.turn(-60)
-robot.straight(125)
+#robot.straight(10)
+robot.turn(-57.5)
+robot.straight(175)
 robot.stop()
 LF_StopBlack(2.5, 0.2, 25, 300)
 robot.straight(-20)
@@ -86,6 +86,7 @@ wait(3000)
 ### Rechten Turm abstellen
 lifter.run_time(-200, 150, then=Stop.HOLD)
 robot.straight(-150)
+robot.straight(-10)
 grabber.run_angle(-700, 2750, wait=False)
 robot.turn(90)
 robot.straight(100)
@@ -97,7 +98,7 @@ lifter.run_time(-150, 1000, then=Stop.HOLD)
 
 robot.straight(-85)
 robot.turn(90)
-robot.straight(155)
+robot.straight(145)
 
 # Abstellen
 lifter.run_time(150, 325, then=Stop.HOLD)
@@ -112,7 +113,6 @@ lifter.run_time(150, 400, then=Stop.COAST, wait=False)
 robot.straight(-160)
 robot.turn(-90)
 robot.straight(175)
-robot.straight(-10)
 
 grabber.run_time(600, 4500, then=Stop.HOLD)
 lifter.run_time(-150, 1000, then=Stop.HOLD)
