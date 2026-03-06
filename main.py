@@ -49,8 +49,49 @@ def fahren(speeder):
     robot.drive(speeder, 0)
             
 # ------------------ Main programm ------------------ #
-# --- Blau + Schwarze Mensch nehmen --- #
+# Warten bis Mittelknopf gedrückt
+ev3.screen.draw_text(x=10, y=10, text="Ready to start")
+print("Programm is ready")
+while Button.CENTER not in ev3.buttons.pressed():
+    pass
+ev3.screen.clear()
+ev3.speaker.beep()
+wait(200)
 
+# --- Blau + Schwarze Mensch nehmen --- #
+lifter.run_time(-200, 500, then=Stop.HOLD, wait=False)
+grabber.run_time(-750, 1750, then=Stop.HOLD, wait=False)
+robot.straight(315)
+robot.turn(-35)
+robot.straight(140)
+lifter.run_time(200, 350, then=Stop.COAST, wait=False)
+robot.straight(-5)
+robot.turn(-90)
+DriveTillColor("left", 7, 400)
+robot.straight(15)
+robot.stop()
+
+robot.turn(40)
+robot.straight(475)
+robot.stop()
+
+# Dreckklumpen mitnehmen
+LF_StopBlack(2.5, 0.4, 25, 300)
+robot.turn(25)
+robot.stop()
+motor_right.run_angle(500, 500)
+motor_right.stop()
+
+robot.straight(225)
+robot.turn(25)
+robot.straight(100)
+lifter.run_time(200, 300, then=Stop.COAST, wait=False)
+grabber.run_time(550, 750, then=Stop.HOLD)
+lifter.run_time(-200, 500, then=Stop.HOLD, wait=False)
+robot.straight(-150)
+robot.turn(90)
+
+time.sleep(60)
 # --- Türme stacken --- #
 # grabber.run_time(400, 5000, then=Stop.HOLD, wait=False)
 lifter.run_time(-200, 300, then=Stop.HOLD, wait=False)
