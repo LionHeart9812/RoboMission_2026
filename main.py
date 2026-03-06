@@ -36,13 +36,13 @@ ev3.speaker.beep()
 
 #Gestell des Roboters (Durchmessser der Reifen, Radstand)-hahaha
 robot = DriveBase(motor_left, motor_right, wheel_diameter=60, axle_track=199)
-robot.settings(750, 400, 450, 300)
+robot.settings(750, 300, 450, 300)
 
 # Fahren ohne Distanz
 def fahren(speeder):
-    # if speeder >= 200:
-    #     robot.drive(speeder/3, 0)
-    #     time.sleep(.5)
+    if speeder >= 200 or speeder < -200:
+        robot.drive(speeder/3, 0)
+        time.sleep(.5)
 
     robot.drive(speeder/1.5, 0)
     time.sleep(.75)
@@ -74,11 +74,11 @@ DriveTillColor("left", 7, 300)
 robot.stop()
 
 # Bro steht bei der Mittellinie
-#robot.straight(10)
-robot.turn(-57.5)
-robot.straight(175)
+robot.straight(-10)
+robot.turn(-58)
+robot.straight(125)
 robot.stop()
-LF_StopBlack(2.5, 0.2, 25, 300)
+LF_StopBlack(2.5, 0.4, 25, 300)
 robot.straight(-20)
 grabber.run_time(700, 3800, wait=False)
 wait(3000)
@@ -88,17 +88,17 @@ lifter.run_time(-200, 150, then=Stop.HOLD)
 robot.straight(-150)
 robot.straight(-10)
 grabber.run_angle(-700, 2750, wait=False)
-robot.turn(90)
+robot.turn(91)
 robot.straight(100)
 robot.turn(-90)
-robot.straight(170)
+robot.straight(180)
 
 grabber.run_time(700, 4100, then=Stop.HOLD)
 lifter.run_time(-150, 1000, then=Stop.HOLD)
 
 robot.straight(-85)
 robot.turn(90)
-robot.straight(145)
+robot.straight(155)
 
 # Abstellen
 lifter.run_time(150, 325, then=Stop.HOLD)
@@ -113,16 +113,18 @@ lifter.run_time(150, 400, then=Stop.COAST, wait=False)
 robot.straight(-160)
 robot.turn(-90)
 robot.straight(175)
+robot.straight(-10)
 
 grabber.run_time(600, 4500, then=Stop.HOLD)
 lifter.run_time(-150, 1000, then=Stop.HOLD)
 
 robot.straight(-150)
 robot.turn(-90)
-robot.straight(145)
+robot.straight(142.5)
 
 #Abstellen
 lifter.run_time(150, 350, then=Stop.HOLD)
 grabber.run_time(-750, 2000, then=Stop.HOLD)
 
 robot.straight(-200)
+grabber.run_time(750, 1250, then=Stop.HOLD)
