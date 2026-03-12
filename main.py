@@ -44,8 +44,10 @@ def fahren(speeder):
         robot.drive(speeder/3, 0)
         time.sleep(.5)
 
-    robot.drive(speeder/1.5, 0)
-    time.sleep(.75)
+    if speeder >= 100:  
+        robot.drive(speeder/1.5, 0)
+        time.sleep(.75)
+
     robot.drive(speeder, 0)
             
 # ------------------ Main programm ------------------ #
@@ -60,36 +62,42 @@ wait(200)
 
 # --- Blau + Schwarze Mensch nehmen --- #
 lifter.run_time(-200, 500, then=Stop.HOLD, wait=False)
-grabber.run_time(-750, 1750, then=Stop.HOLD, wait=False)
-robot.straight(315)
-robot.turn(-35)
-robot.straight(140)
+grabber.run_time(-750, 2500, then=Stop.HOLD, wait=False)
+DriveTillDouble(12, 150)
+robot.turn(-45)
+robot.straight(275)
+robot.turn(60)
+robot.straight(225)
 lifter.run_time(200, 350, then=Stop.COAST, wait=False)
-robot.straight(-5)
+grabber.run_time(750, 2250, then=Stop.HOLD)
+time.sleep(100)
 robot.turn(-90)
-DriveTillColor("left", 7, 400)
-robot.straight(15)
 robot.stop()
+DriveTillColor("left", 7, 400)
+robot.straight(10)
 
 robot.turn(40)
-robot.straight(475)
+robot.straight(500)
 robot.stop()
 
 # Dreckklumpen mitnehmen
 LF_StopBlack(2.5, 0.4, 25, 300)
 robot.turn(25)
 robot.stop()
-motor_right.run_angle(500, 500)
+motor_right.run_angle(500, 525)
 motor_right.stop()
-
 robot.straight(225)
-robot.turn(25)
-robot.straight(100)
-lifter.run_time(200, 300, then=Stop.COAST, wait=False)
-grabber.run_time(550, 750, then=Stop.HOLD)
+
+grabber.run_time(-550, 1000, then=Stop.HOLD, wait=False)
+wait(750)
 lifter.run_time(-200, 500, then=Stop.HOLD, wait=False)
 robot.straight(-150)
-robot.turn(90)
+robot.turn(45)
+robot.straight(150)
+lifter.run_time(200, 500, then=Stop.COAST, wait=False)
+wait(100)
+grabber.run_time(550, 1000, then=Stop.HOLD)
+robot.straight(-150)
 
 time.sleep(60)
 # --- Türme stacken --- #

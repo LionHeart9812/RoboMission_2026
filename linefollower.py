@@ -37,9 +37,10 @@ def fahren(speeder):
     # if speeder >= 200:
     #     robot.drive(speeder/3, 0)
     #     time.sleep(.5)
-        
-    robot.drive(speeder/1.5, 0)
-    time.sleep(.75)
+
+    if speeder >= 100:  
+        robot.drive(speeder/1.5, 0)
+        time.sleep(.75)
     robot.drive(speeder, 0)
 
 def bremsen():
