@@ -36,7 +36,7 @@ ev3.speaker.beep()
 
 #Gestell des Roboters (Durchmessser der Reifen, Radstand)-hahaha
 robot = DriveBase(motor_left, motor_right, wheel_diameter=60, axle_track=199)
-robot.settings(750, 300, 450, 300)
+robot.settings(750, 400, 450, 350)
 
 # Fahren ohne Distanz
 def fahren(speeder):
@@ -68,11 +68,11 @@ lifter.run_time(200, 350, then=Stop.COAST, wait=False)
 robot.straight(-5)
 robot.turn(-90)
 DriveTillColor("left", 7, 400)
-robot.straight(15)
+robot.straight(20)
 robot.stop()
 
 robot.turn(40)
-robot.straight(475)
+robot.straight(480)
 robot.stop()
 
 # Dreckklumpen mitnehmen
@@ -82,14 +82,26 @@ robot.stop()
 motor_right.run_angle(500, 500)
 motor_right.stop()
 
-robot.straight(225)
+robot.straight(215)
 grabber.run_time(-750, 1500)
-lifter.run_time(-200, 500, then=Stop.HOLD, wait=False)
+lifter.run_time(-200, 750, then=Stop.HOLD, wait=False)
 
-ev3.speaker.beep()
-robot.straight(-50)
+robot.straight(-100)
+robot.stop()
+robot.turn(35)
+grabber.run_time(750, 1250)
+robot.straight(100)
+lifter.run_time(200, 250, then=Stop.COAST)
+
+grabber.run_time(750, 1700, then=Stop.HOLD)
+lifter.run_time(-175, 700, then=Stop.HOLD)
+robot.straight(-200)
+
+robot.stop()
 motor_left.run_angle(500, 500)
 motor_left.stop()
+#robot.turn(80)
+robot.straight(225)
 
 time.sleep(60)
 # --- Türme stacken --- #
