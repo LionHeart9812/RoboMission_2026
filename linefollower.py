@@ -40,12 +40,8 @@ def fahren(speeder):
 
     if speeder >= 100:  
         robot.drive(speeder/1.5, 0)
-        time.sleep(.75)
+        time.sleep(.3)
     robot.drive(speeder, 0)
-
-def bremsen():
-    robot.stop()
-    wait(25)
 
 # Fahren bis zur einer doppelten schwarzen Linie
 def DriveTillDouble(colorIndex, speed):
@@ -60,7 +56,7 @@ def DriveTillDouble(colorIndex, speed):
         # Einfach gerade aus fahren mit bestimmter Geschwindigkeit (speed)
         # Wenn beide Farbsensoren eine bestimmte Farbe (colorIndex) sehen, dann stoppen
         if colorReflection_left < colorIndex + 3 and colorReflection_left > colorIndex - 3 and colorReflection_right < colorIndex + 3 and colorReflection_right > colorIndex - 3:
-            bremsen()
+            robot.stop()
             print("color sensor left: " + str(colorReflection_left))
             print("color sensor right: " + str(colorReflection_right))
             print("----------------------------")
@@ -77,7 +73,7 @@ def DriveTillColor(whichSensor, colorIndex, speed):
             # Einfach gerade aus fahren mit variable speed
             # Wenn ein ausgewählter (whichsensor) Farbsenor eine bestimmte Farbe (colorIndex) sieht, dann stoppen
             if colorReflection_left < colorIndex + 3 and colorReflection_left > colorIndex - 3:
-                bremsen()
+                robot.stop()
                 print("color sensor left: " + str(colorReflection_left))
                 print("----------------------------")
                 seenBlack = 1
@@ -92,7 +88,7 @@ def DriveTillColor(whichSensor, colorIndex, speed):
             # Einfach gerade aus fahren mit variable speed
             # Wenn ein ausgewählter (whichsensor) Farbsenor eine bestimmte Farbe (colorIndex) sieht, dann stoppen
             if colorReflection_right < colorIndex + 3 and colorReflection_right > colorIndex - 3:
-                bremsen()
+                robot.stop()
                 print("color sensor left: " + str(colorReflection_right))
                 print("----------------------------")
                 seenBlack = 1
