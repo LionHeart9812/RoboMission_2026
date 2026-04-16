@@ -37,24 +37,16 @@ ev3.speaker.beep()
 #Gestell des Roboters (Durchmessser der Reifen, Radstand)-hahaha
 robot = DriveBase(motor_left, motor_right, wheel_diameter=60, axle_track=199)
 robot.settings(750, 400, 450, 400)
-
-# Fahren ohne Distanz
-def fahren(speeder):
-    if speeder >= 200 or speeder < -200:
-        robot.drive(speeder/3, 0)
-        time.sleep(.5)
-
-    robot.drive(speeder/1.5, 0)
-    time.sleep(.75)
-    robot.drive(speeder, 0)
             
 # ------------------ Main programm ------------------ #
 # Warten bis Mittelknopf gedrückt
 ev3.screen.draw_text(x=10, y=10, text="Ready to start")
 print("Programm is ready")
+ev3.light.on(Color.ORANGE)
 while Button.CENTER not in ev3.buttons.pressed():
     pass
 ev3.screen.clear()
+ev3.light.on(Color.GREEN)
 ev3.speaker.beep()
 wait(200)
 
@@ -66,7 +58,7 @@ robot.turn(-35)
 robot.straight(140)
 lifter.run_time(200, 350, then=Stop.COAST, wait=False)
 robot.straight(-5)
-robot.turn(-98)
+robot.turn(-95)
 robot.straight(300)
 robot.turn(45)
 DriveTillDouble(7, 300)
@@ -74,38 +66,61 @@ robot.straight(150)
 robot.turn(-55)
 robot.stop()
 wait(100)
-DriveTillColor("right",  7, 250)
+DriveTillColor("left",  7, 250)
 robot.stop()
-robot.turn(58)
+robot.straight(10)
+robot.turn(63)
 robot.straight(150)
 robot.stop()
 
 # Dreckklumpen mitnehmen
-LF_StopBlack(2.5, 0.4, 25, 300)
+LF_StopLine(2.5, 0.4, 25, 300)
 robot.stop()
 
 motor_left.run_angle(500, 350)
 motor_left.stop()
 
 robot.straight(-35)
-grabber.run_time(750, 1800)
-lifter.run_time(-200, 750, then=Stop.HOLD)
-robot.straight(275)
-robot.straight(-275)
-robot.turn(-35)
-robot.straight(50)
+lifter.run_time(-250, 150, then=Stop.HOLD)
+grabber.run_time(750, 2500)
+lifter.run_time(-200, 650, then=Stop.HOLD)
+robot.straight(250)
 robot.stop()
 
-motor_right.run_angle(500, 600)
+motor_left.run_angle(500, 150)
+motor_left.stop()
+motor_left.run_angle(-500, 150)
+motor_left.stop()
+
+robot.straight(-250)
+robot.turn(-35)
+robot.straight(75)
+robot.stop()
+
+motor_right.run_angle(500, 500)
 motor_right.stop()
 
-robot.straight(250)
-robot.straight(-150)
+robot.straight(300)
+robot.straight(-175)
 lifter.run_time(200, 500, then=Stop.COAST, wait=False)
-grabber.run_time(-750, 1800)
+grabber.run_time(-750, 2500, wait=False)
+wait(2250)
+robot.straight(-155)
 
 robot.stop()
+# --- Rot + Grüne Mensch nehmen --- #
+# Zurückfahren
+robot.turn(-110)
+grabber.run_time(750, 2500, wait=False)
+DriveTillDouble(19, 250)
+robot.stop()
+
+robot.drive(1500)
+LF_StopLine(2.5, 0.4, 10, 300)
+robot.stop()
+
 time.sleep(60)
+
 # --- Türme stacken --- #
 # grabber.run_time(400, 5000, then=Stop.HOLD, wait=False)
 lifter.run_time(-200, 300, then=Stop.HOLD, wait=False)
@@ -135,7 +150,7 @@ robot.straight(-10)
 robot.turn(-58)
 robot.straight(125)
 robot.stop()
-LF_StopBlack(2.5, 0.4, 25, 300)
+LF_StopLine(2.5, 0.4, 25, 300)
 robot.straight(-20)
 grabber.run_time(700, 3800, wait=False)
 wait(3000)

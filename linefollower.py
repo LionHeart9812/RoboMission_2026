@@ -22,7 +22,6 @@ colorReflection_left =  colorSensor_left.reflection()
 colorReflection_right = colorSensor_right.reflection()
 pixy = Pixy2(port=2, i2c_address=0x54)
 
-seenBlack = 0
 i = 1
 lastDirection = "none"
 
@@ -30,71 +29,63 @@ lastDirection = "none"
 robot = DriveBase(motor_left, motor_right, wheel_diameter=60, axle_track=199)
 
 # Einstellungen variable("robot")
-robot.settings(600, 550, 200, 150)
+robot.settings(750, 400, 450, 400)
 
-# Fahren ohne Distanz
-def fahren(speeder):
-    # if speeder >= 200:
-    #     robot.drive(speeder/3, 0)
-    #     time.sleep(.5)
+def bremsen():
+    robot.stop()
+    motor_left.stop(Stop.BRAKE)
+    motor_right.stop(Stop.BRAKE)
 
-    if speeder >= 100:  
-        robot.drive(speeder/1.5, 0)
-        time.sleep(.3)
-    robot.drive(speeder, 0)
-
-# Fahren bis zur einer doppelten schwarzen Linie
 def DriveTillDouble(colorIndex, speed):
-    colorReflection_left =  colorSensor_left.reflection()
-    colorReflection_right = colorSensor_right.reflection()
-    seenBlack = 0
-    fahren(speed)
-
-    while seenBlack == 0: 
-        colorReflection_left =  colorSensor_left.reflection()
+    robot.drive(speed, 0)
+    
+    while True:
+        colorReflection_left = colorSensor_left.reflection()
         colorReflection_right = colorSensor_right.reflection()
-        # Einfach gerade aus fahren mit bestimmter Geschwindigkeit (speed)
-        # Wenn beide Farbsensoren eine bestimmte Farbe (colorIndex) sehen, dann stoppen
-        if colorReflection_left < colorIndex + 3 and colorReflection_left > colorIndex - 3 and colorReflection_right < colorIndex + 3 and colorReflection_right > colorIndex - 3:
-            robot.stop()
+        
+        if (colorReflection_left < colorIndex + 7 and colorReflection_left > colorIndex - 7 and 
+            colorReflection_right < colorIndex + 7 and colorReflection_right > colorIndex - 7):
             print("color sensor left: " + str(colorReflection_left))
             print("color sensor right: " + str(colorReflection_right))
             print("----------------------------")
-            seenBlack = 1
+            break
+        
+    bremsen()
+    wait(100)
 
 def DriveTillColor(whichSensor, colorIndex, speed):
     if whichSensor == "left":
-        colorReflection_left =  colorSensor_left.reflection()
-        seenBlack = 0
-        fahren(speed)
+        robot.drive(speed, 0)
 
-        while seenBlack == 0: 
+        while True:
             colorReflection_left =  colorSensor_left.reflection()
             # Einfach gerade aus fahren mit variable speed
             # Wenn ein ausgewählter (whichsensor) Farbsenor eine bestimmte Farbe (colorIndex) sieht, dann stoppen
             if colorReflection_left < colorIndex + 3 and colorReflection_left > colorIndex - 3:
-                robot.stop()
                 print("color sensor left: " + str(colorReflection_left))
                 print("----------------------------")
-                seenBlack = 1
+                break
+        
+        bremsen()
+        wait(100)
 
     elif whichSensor == "right":
-        colorReflection_right =  colorSensor_right.reflection()
-        seenBlack = 0
-        fahren(speed)
+        robot.drive(speed, 0)
 
-        while seenBlack == 0: 
+        while True:
             colorReflection_right =  colorSensor_right.reflection()
             # Einfach gerade aus fahren mit variable speed
             # Wenn ein ausgewählter (whichsensor) Farbsenor eine bestimmte Farbe (colorIndex) sieht, dann stoppen
             if colorReflection_right < colorIndex + 3 and colorReflection_right > colorIndex - 3:
-                robot.stop()
                 print("color sensor left: " + str(colorReflection_right))
                 print("----------------------------")
-                seenBlack = 1
+                break
+        
+        bremsen()
+        wait(100)
 
 # Liniefolger sehr Krass
-def LF_StopBlack(correctionStrength, correctionRemember, colorIndex, speed):
+def LF_StopLine(correctionStrength, correctionRemember, colorIndex, speed):
     last_error = 0
     speed_left = 0
     speed_right = 0
@@ -125,6 +116,7 @@ def LF_StopBlack(correctionStrength, correctionRemember, colorIndex, speed):
         motor_left.run(speed_left)
         motor_right.run(speed_right)
         wait(5)
+        
     motor_left.run(0)
     motor_right.run(0)
     wait(10)
