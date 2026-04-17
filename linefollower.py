@@ -123,3 +123,47 @@ def LF_StopLine(correctionStrength, correctionRemember, colorIndex, speed):
     motor_left.stop()
     motor_right.stop()
     ev3.speaker.beep()
+
+# Liniefolger sehr Krass, aber auf Zeit digga
+def LF_StopLine_Time(correctionStrength, correctionRemember, colorIndex, speed, time_ms):
+    stopwatch = StopWatch()
+
+    last_error = 0
+    speed_left = 0
+    speed_right = 0
+    left_ref = colorSensor_left.reflection()
+    right_ref = colorSensor_right.reflection()
+
+    LINE_SPEED = speed # Basic Geschwindigkeit
+    TURN_SPEED = 800 # Maximale Drehgeschwindigkeit
+
+    stopwatch.reset()
+
+    while stopwatch.time() < time_ms:
+        left_ref = colorSensor_left.reflection()
+        right_ref = colorSensor_right.reflection()
+        if left_ref <= colorIndex and right_ref <= colorIndex:
+            motor_left.stop(Stop.BRAKE)
+            motor_right.stop(Stop.BRAKE)
+            break
+
+        # Line following logic
+        error = left_ref - right_ref
+        derivative = error - last_error
+        correction = correctionStrength * error + correctionRemember * derivative
+        last_error = error
+
+        speed_left = max(min(LINE_SPEED + correction, TURN_SPEED), -TURN_SPEED)
+        speed_right = max(min(LINE_SPEED - correction, TURN_SPEED), -TURN_SPEED)
+
+        motor_left.run(speed_left)
+        motor_right.run(speed_right)
+        wait(5)
+        
+    motor_left.run(0)
+    motor_right.run(0)
+    wait(10)
+    motor_left.stop()
+    motor_right.stop()
+    print("Zeit:", stopwatch.time())
+    ev3.speaker.beep()
