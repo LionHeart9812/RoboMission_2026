@@ -31,11 +31,6 @@ robot = DriveBase(motor_left, motor_right, wheel_diameter=60, axle_track=199)
 # Einstellungen variable("robot")
 robot.settings(750, 400, 450, 400)
 
-def bremsen():
-    robot.stop()
-    motor_left.stop(Stop.BRAKE)
-    motor_right.stop(Stop.BRAKE)
-
 def DriveTillDouble(colorIndex, speed):
     robot.drive(speed, 0)
     
@@ -50,7 +45,7 @@ def DriveTillDouble(colorIndex, speed):
             print("----------------------------")
             break
         
-    bremsen()
+    robot.stop()
     wait(100)
 
 def DriveTillColor(whichSensor, colorIndex, speed):
@@ -66,7 +61,7 @@ def DriveTillColor(whichSensor, colorIndex, speed):
                 print("----------------------------")
                 break
         
-        bremsen()
+        robot.stop()
         wait(100)
 
     elif whichSensor == "right":
@@ -81,7 +76,7 @@ def DriveTillColor(whichSensor, colorIndex, speed):
                 print("----------------------------")
                 break
         
-        bremsen()
+        robot.stop()
         wait(100)
 
 # Liniefolger sehr Krass
