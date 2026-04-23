@@ -82,13 +82,13 @@ robot.stop()
 wait(100)
 DriveTillColor("left",  7, 250)
 robot.stop()
-robot.straight(35)
+robot.straight(40)
 robot.turn(80)
-robot.straight(100)
+robot.straight(135)
 robot.stop()
 
 # Dreckklumpen mitnehmen
-LF_StopLine(2.5, 0.35, 25, 300)
+LF_StopLine(2.5, 0.3, 25, 300)
 robot.stop()
 
 motor_left.run_angle(500, 335)
@@ -111,7 +111,8 @@ robot.turn(-35)
 robot.straight(75)
 robot.stop()
 
-motor_right.run_angle(500, 490)
+# Schwarzen abstellen
+motor_right.run_angle(500, 475)
 motor_right.stop()
 
 robot.straight(250)
@@ -173,7 +174,7 @@ motor_right.stop()
 DriveTillDouble(9, 350)
 wait(15)
 robot.straight(400)
-grabber.run_time(750, 2750, then=Stop.HOLD, wait=False)
+grabber.run_time(750, 2250, then=Stop.HOLD, wait=False)
 robot.straight(-100)
 
 time.sleep(60)
