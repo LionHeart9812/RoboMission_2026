@@ -43,62 +43,109 @@ goalPlace = {
 # Funktionen
 def scan():
     nr_blocks, blocks = pixy.get_blocks(0x1F, 3)
+    minWidth = 47
 
     if nr_blocks >= 1:
         for b in blocks[:nr_blocks]:
-            if b.sig == 1 and b.width >= 45:
-                print("Höhe des Farbe:", b.width)
+            if b.sig == 1 and b.width >= minWidth:
+                print("Breite der Farbe:", b.width)
                 return "red"
-            elif b.sig == 2 and b.width >= 45:
-                print("Höhe des Farbe:", b.width)
+            elif b.sig == 2 and b.width >= minWidth:
+                print("Breite der Farbe:", b.width)
                 return "yellow"
-            elif b.sig == 3 and b.width >= 45:
-                print("Höhe des Farbe:", b.width)
+            elif b.sig == 3 and b.width >= minWidth:
+                print("Breite der Farbe:", b.width)
                 return "green"
-            elif b.sig == 4 and b.width >= 45:
-                print("Höhe des Farbe:", b.width)
+            elif b.sig == 4 and b.width >= minWidth:
+                print("Breite der Farbe:", b.width)
                 return "blue"
             else:
                 print("Wahrscheinlich schwoarz")
                 return "black"
+            
+    else:
+        print("Wahrscheinlich schwoarz")
+        return "black"
+    
+def scanDrive():
+    count = 3
+    while count > 0:
+        wait(150)
+        color = scan()
+        print(color)
+
+        robot.straight(125)
+        pos.append(color)
+        count -= 1
+
+    wait(150)
+    color = scan()
+    print(color)
+    pos.append(color)
+
+    print(pos)
 
 def twoArtefacts():
     perfect = []
     two_artefacts = False
+    correctOrientation = False
 
     for i in range(len(pos) - 1):
         a = pos[i]
         b = pos[i + 1]
 
         if abs(goalPlace[a] - goalPlace[b]) == 1:
+            if goalPlace[a] - goalPlace[b] == 1:
+                print("Richtige Artefaktposition")
+                correctOrientation = True
+
+            elif goalPlace[a] - goalPlace[b] == -1:
+                print("Getauschte Artefaktposition")
+
             perfect.append((a, b))
             two_artefacts = True
-
-    return perfect, two_artefacts
+    
+    print(perfect)
+    return two_artefacts, correctOrientation
 
 
 def checkPrio():
-    pass
+    isTwoArtefacts, correctOrentation = twoArtefacts()
+
+    if isTwoArtefacts:
+        if correctOrentation:
+            priority = 4
+        else:
+            priority = 3
+
+    elif not isTwoArtefacts:
+        for i in pos:
+            if i == "yellow" or i == "red":
+                priority = 2
+            else:
+                priority = 1
+
+    return priority
+
 
 def artefacts():
     while not AllArtefacts == 0:
         pass
 
-count = 3
-while count > 0:
-    wait(150)
-    color = scan()
-    print(color)
+# Warten bis Mittelknopf gedrückt
+ev3.screen.draw_text(x=10, y=10, text="Ready to start")
+print("Programm is ready")
+ev3.light.on(Color.ORANGE)
+while Button.CENTER not in ev3.buttons.pressed():
+    pass
+ev3.screen.clear()
+ev3.light.on(Color.GREEN)
+ev3.speaker.beep()
+wait(200)
 
-    robot.straight(125)
-    pos.append(color)
-    count -= 1
+# while AllArtefacts < 0:
 
-wait(150)
-color = scan()
-print(color)
-pos.append(color)
-
-print(pos)
-whichBlocks, two_artefacts = twoArtefacts()
-print(whichBlocks)
+# Scannen
+scanDrive()
+prio = checkPrio()
+print(prio)
