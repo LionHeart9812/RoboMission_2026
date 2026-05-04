@@ -34,7 +34,7 @@ pixy.set_lamp(1, 1)
 AllArtefacts = 4
 
 pos = []
-perfect = []
+perfect = {}
 goalPlace = {
     "red": 0,
     "green": 1,
@@ -106,11 +106,11 @@ def twoArtefacts():
             elif goalPlace[a] - goalPlace[b] == -1:
                 print("Getauschte Artefaktposition")
 
-            perfect.append(pos.index(a))
-            perfect.append(pos.index(b))
+            perfect[(pos.index(a), pos.index(b))] = correctOrientation
             two_artefacts = True
     
     print(perfect)
+    print("------------")
     return two_artefacts, correctOrientation
 
 # Checken, welche Prios
@@ -137,31 +137,36 @@ def artefacts(prio):
     pixy.set_lamp(0, 0)
 
     # Check Priority and give positioning
-    if prio == 4:
-        if 0 in perfect:
-            postioning = ("right", "outside", "correct")
-        elif 3 in perfect:
-            postioning = ("left", "outside", "correct")
-        else:
-            postioning = ("middle", "inside", "correct")
+    if prio == 4 or prio == 3:
+        for pairs, orientValue in perfect.items():
 
-    elif prio == 3:
-        if 0 in perfect:
-            postioning = ("right", "outside", "false")
-        elif 3 in perfect:
-            postioning = ("left", "outside", "false")
-        else:
-            postioning = ("middle", "inside", "false")
+            if orientValue:
+                if 0 in pairs:
+                    postioning = ("right", "outside", "true")
+                if 3 in pairs:
+                    postioning = ("left", "outside", "true")
+                else:
+                    postioning = ("middle", "inside", "true")
+            
+            elif not orientValue:
+                if 0 in pairs:
+                    postioning = ("right", "outside", "false")
+                if 3 in pairs:
+                    postioning = ("left", "outside", "false")
+                else:
+                    postioning = ("middle", "inside", "false")
+
 
     #Drive to the places
     side, where, orientation = postioning
+    print(side, where, orientation)
     DriveTillDouble(9, -200)
 
     if side == "right":
-        robot.straight(-100)
+        robot.straight(-150)
 
     elif side == "left":
-        robot.straight(100)
+        robot.straight(150)
     
     else:
         robot.straight(35)
