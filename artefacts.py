@@ -8,6 +8,7 @@ from pybricks.robotics import DriveBase
 from pybricks.media.ev3dev import SoundFile, ImageFile
 from pixycamev3.pixy2 import Pixy2
 import time
+from linefollower import *
 
 # This program requires LEGO EV3 MicroPython v2.0 or higher.
 # Click "Open user guide" on the EV3 extension tab for more information.
@@ -25,13 +26,15 @@ pixy = Pixy2(port=2, i2c_address=0x54)
 #Gestell des Roboters (Durchmessser der Reifen, Radstand)
 robot = DriveBase(motor_left, motor_right, wheel_diameter=60, axle_track=199)
 
-# Einstellungen variable("robot")
+# Einstellungen variable("robot") + Pixy
 robot.settings(750, 400, 450, 400)
+pixy.set_lamp(1, 1)
 
 # Globale Variabels
 AllArtefacts = 4
 
 pos = []
+perfect = []
 goalPlace = {
     "red": 0,
     "green": 1,
@@ -40,10 +43,10 @@ goalPlace = {
     "yellow": 4
 }
 
-# Funktionen
+# --- Funktionen --- #
 def scan():
     nr_blocks, blocks = pixy.get_blocks(0x1F, 3)
-    minWidth = 47
+    minWidth = 60
 
     if nr_blocks >= 1:
         for b in blocks[:nr_blocks]:
@@ -66,11 +69,11 @@ def scan():
     else:
         print("Wahrscheinlich schwoarz")
         return "black"
-    
+
+# Scannen    
 def scanDrive():
-    count = 3
+    count = AllArtefacts - 1
     while count > 0:
-        wait(150)
         color = scan()
         print(color)
 
@@ -78,15 +81,16 @@ def scanDrive():
         pos.append(color)
         count -= 1
 
-    wait(150)
     color = scan()
     print(color)
     pos.append(color)
 
+    print("----------------")
     print(pos)
+    print("----------------")
 
+# Checken, ob es zwei nebeneinander gibt
 def twoArtefacts():
-    perfect = []
     two_artefacts = False
     correctOrientation = False
 
@@ -102,13 +106,14 @@ def twoArtefacts():
             elif goalPlace[a] - goalPlace[b] == -1:
                 print("Getauschte Artefaktposition")
 
-            perfect.append((a, b))
+            perfect.append(pos.index(a))
+            perfect.append(pos.index(b))
             two_artefacts = True
     
     print(perfect)
     return two_artefacts, correctOrientation
 
-
+# Checken, welche Prios
 def checkPrio():
     isTwoArtefacts, correctOrentation = twoArtefacts()
 
@@ -127,11 +132,44 @@ def checkPrio():
 
     return priority
 
+# Wegbringen
+def artefacts(prio):
+    pixy.set_lamp(0, 0)
 
-def artefacts():
-    while not AllArtefacts == 0:
-        pass
+    # Check Priority and give positioning
+    if prio == 4:
+        if 0 in perfect:
+            postioning = ("right", "outside", "correct")
+        elif 3 in perfect:
+            postioning = ("left", "outside", "correct")
+        else:
+            postioning = ("middle", "inside", "correct")
 
+    elif prio == 3:
+        if 0 in perfect:
+            postioning = ("right", "outside", "false")
+        elif 3 in perfect:
+            postioning = ("left", "outside", "false")
+        else:
+            postioning = ("middle", "inside", "false")
+
+    #Drive to the places
+    side, where, orientation = postioning
+    DriveTillDouble(9, -200)
+
+    if side == "right":
+        robot.straight(-100)
+
+    elif side == "left":
+        robot.straight(100)
+    
+    else:
+        robot.straight(35)
+
+    robot.turn(90)
+
+
+# ---- Main Programm ---- #
 # Warten bis Mittelknopf gedrückt
 ev3.screen.draw_text(x=10, y=10, text="Ready to start")
 print("Programm is ready")
@@ -147,5 +185,6 @@ wait(200)
 
 # Scannen
 scanDrive()
-prio = checkPrio()
-print(prio)
+priority = checkPrio()
+print(priority)
+artefacts(priority)
