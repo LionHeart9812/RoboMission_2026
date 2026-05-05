@@ -46,7 +46,7 @@ goalPlace = {
 # --- Funktionen --- #
 def scan():
     nr_blocks, blocks = pixy.get_blocks(0x1F, 3)
-    minWidth = 60
+    minWidth = 70
 
     if nr_blocks >= 1:
         for b in blocks[:nr_blocks]:
@@ -93,6 +93,7 @@ def scanDrive():
 def twoArtefacts():
     two_artefacts = False
     correctOrientation = False
+    correctOrientationExists = False
 
     for i in range(len(pos) - 1):
         a = pos[i]
@@ -102,20 +103,23 @@ def twoArtefacts():
             if goalPlace[a] - goalPlace[b] == 1:
                 print("Richtige Artefaktposition")
                 correctOrientation = True
+                correctOrientationExists = True
 
             elif goalPlace[a] - goalPlace[b] == -1:
                 print("Getauschte Artefaktposition")
+                correctOrientation = False
 
             perfect[(pos.index(a), pos.index(b))] = correctOrientation
             two_artefacts = True
     
     print(perfect)
     print("------------")
-    return two_artefacts, correctOrientation
+    return two_artefacts, correctOrientationExists
 
 # Checken, welche Prios
 def checkPrio():
     isTwoArtefacts, correctOrentation = twoArtefacts()
+    whichIndex = -1
 
     if isTwoArtefacts:
         if correctOrentation:
@@ -127,51 +131,81 @@ def checkPrio():
         for i in pos:
             if i == "yellow" or i == "red":
                 priority = 2
+                whichIndex = pos.index(i)
             else:
                 priority = 1
+                whichIndex = pos.index(i)
 
-    return priority
+    return priority, whichIndex
 
 # Wegbringen
-def artefacts(prio):
+def artefacts(prio, OutsiderIndex):
     pixy.set_lamp(0, 0)
 
     # Check Priority and give positioning
-    if prio == 4 or prio == 3:
+    # if there is a correctOrentiation one
+    if prio == 4:
         for pairs, orientValue in perfect.items():
+            if not orientValue:
+                print("not the right one")
+                pass
 
-            if orientValue:
+            elif orientValue:
+                print("the right one")
+                print(pairs)
+                print(0 in pairs)
                 if 0 in pairs:
-                    postioning = ("right", "outside", "true")
-                if 3 in pairs:
-                    postioning = ("left", "outside", "true")
+                    postioning = ("right", "true")
+                elif 3 in pairs:
+                    postioning = ("left", "true")
                 else:
-                    postioning = ("middle", "inside", "true")
-            
-            elif not orientValue:
-                if 0 in pairs:
-                    postioning = ("right", "outside", "false")
-                if 3 in pairs:
-                    postioning = ("left", "outside", "false")
-                else:
-                    postioning = ("middle", "inside", "false")
+                    postioning = ("middle" "true")
+   
+                break
 
+    # if there isn't
+    elif prio == 3:
+        for pairs, orientValue in perfect.items():
+            if 0 in pairs:
+                postioning = ("right", "false")
+            elif 3 in pairs:
+                postioning = ("left", "false")
+            else:
+                postioning = ("middle" "false")
+                
+            break
+
+    elif prio == 2 or prio == 1:
+        if OutsiderIndex == 0:
+            postioning = ("right", "outsider")
+        elif OutsiderIndex == 1:
+            postioning = ("middleRight", "outsider")
+        elif OutsiderIndex == 2:
+            postioning = ("middleLeft", "outsider")
+        elif OutsiderIndex == 3:
+            postioning = ("left", "outsider")
+        else:
+            print("Non-Existent?")
 
     #Drive to the places
-    side, where, orientation = postioning
-    print(side, where, orientation)
+    side, orientation = postioning
+    print(side, orientation)
     DriveTillDouble(9, -200)
 
-    if side == "right":
-        robot.straight(-150)
+    if prio == 4 or prio == 3:
+        if side == "right":
+            robot.straight(-100)
 
-    elif side == "left":
-        robot.straight(150)
+        elif side == "left":
+            robot.straight(175)
     
-    else:
-        robot.straight(35)
+        else:
+            robot.straight(35)
 
-    robot.turn(90)
+        robot.turn(90)
+
+    else:
+        robot.turn(-90)
 
 
 # ---- Main Programm ---- #
@@ -190,6 +224,6 @@ wait(200)
 
 # Scannen
 scanDrive()
-priority = checkPrio()
-print(priority)
-artefacts(priority)
+priority, whichIndex = checkPrio()
+print(priority, "Index of Red/Yellow:", whichIndex)
+artefacts(priority, whichIndex)
