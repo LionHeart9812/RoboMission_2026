@@ -42,6 +42,7 @@ AllArtefacts = 4
 
 pos = []
 perfect = {}
+perfectColor = []
 goalPlace = {
     "red": 0,
     "green": 1,
@@ -52,13 +53,12 @@ goalPlace = {
 
 # --- Funktionen --- #
 def zweiGrabben():
-    robot.drive(750, 0)
-    wait(500)
+    robot.drive(350, 0)
+    wait(600)
     robot.stop()
-    grabber.run_time(-750, 2250, then=Stop.HOLD)
+    grabber.run_time(-750, 2150, then=Stop.HOLD)
     robot.straight(-675)
     
-
 def scan():
     nr_blocks, blocks = pixy.get_blocks(0x1F, 3)
     minWidth = 70
@@ -125,6 +125,7 @@ def twoArtefacts():
                 correctOrientation = False
 
             perfect[(pos.index(a), pos.index(b))] = correctOrientation
+            perfectColor.append((a, b))
             two_artefacts = True
     
     print(perfect)
@@ -208,28 +209,56 @@ def artefacts(prio, OutsiderIndex):
     DriveTillDouble(9, -200)
 
     if prio == 4 or prio == 3:
+        #Checken, welche Seite Steinis ist
         if side == "right":
             robot.straight(-100)
 
         elif side == "left":
-            robot.straight(175)
+            robot.straight(150)
     
         else:
             robot.straight(35)
 
+        # Nehmen
         robot.turn(90)
         zweiGrabben()
 
-        if side == "right":
-            robot.turn(-90)
-            DriveTillDouble(9, 450)
-            robot.turn(-90)
-    
+        #Checken, welche seite Guppy der süße ist
+        if side == "left":
+            robot.turn(90)
+            DriveTillDouble(9, 300)
+
         else:
             robot.turn(90)
-            DriveTillDouble(9, 450)
-            robot.turn(90)
+            DriveTillDouble(9, -300)
 
+        # Wegbringen wenn prio 4 ist
+        if prio == 4:
+            for colorPairs in perfectColor:
+                right, left = colorPairs
+                print(right)
+
+            if right == "yellow":
+                robot.straight(-200)
+                robot.turn(92)
+
+            elif right == "blue":
+                robot.straight(-100)
+                robot.turn(92)
+
+            elif right == "black":
+                robot.straight(125)
+                robot.turn(92)
+
+            elif right == "green":
+                robot.straight(250)
+                robot.turn(92)
+
+            robot.straight(135)
+            grabber.run_time(750, 2200, then=Stop.HOLD)
+            robot.turn(5)
+            robot.turn(-10)
+            robot.turn(50)
 
     else:
         robot.turn(-90)
@@ -254,3 +283,5 @@ scanDrive()
 priority, whichIndex = checkPrio()
 print(priority, "Index of Red/Yellow:", whichIndex)
 artefacts(priority, whichIndex)
+grabber.stop()
+robot.stop()
