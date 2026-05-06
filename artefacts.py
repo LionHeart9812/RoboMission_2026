@@ -15,12 +15,19 @@ from linefollower import *
 
 # Create your objects here.
 ev3 = EV3Brick()
+
 motor_left = Motor(Port.D, positive_direction=Direction.COUNTERCLOCKWISE)
 motor_right = Motor(Port.A, positive_direction=Direction.CLOCKWISE)
+
+lifter = Motor(Port.B, positive_direction=Direction.CLOCKWISE)
+grabber = Motor(Port.C, positive_direction=Direction.COUNTERCLOCKWISE)
+
 colorSensor_left = ColorSensor(Port.S1)
 colorSensor_right = ColorSensor(Port.S4)
+#
 colorReflection_left =  colorSensor_left.reflection()
 colorReflection_right = colorSensor_right.reflection()
+
 pixy = Pixy2(port=2, i2c_address=0x54)
 
 #Gestell des Roboters (Durchmessser der Reifen, Radstand)
@@ -44,6 +51,14 @@ goalPlace = {
 }
 
 # --- Funktionen --- #
+def zweiGrabben():
+    robot.drive(750, 0)
+    wait(500)
+    robot.stop()
+    grabber.run_time(-750, 2250, then=Stop.HOLD)
+    robot.straight(-675)
+    
+
 def scan():
     nr_blocks, blocks = pixy.get_blocks(0x1F, 3)
     minWidth = 70
@@ -159,7 +174,7 @@ def artefacts(prio, OutsiderIndex):
                 elif 3 in pairs:
                     postioning = ("left", "true")
                 else:
-                    postioning = ("middle" "true")
+                    postioning = ("middle", "true")
    
                 break
 
@@ -171,7 +186,7 @@ def artefacts(prio, OutsiderIndex):
             elif 3 in pairs:
                 postioning = ("left", "false")
             else:
-                postioning = ("middle" "false")
+                postioning = ("middle", "false")
                 
             break
 
@@ -203,6 +218,18 @@ def artefacts(prio, OutsiderIndex):
             robot.straight(35)
 
         robot.turn(90)
+        zweiGrabben()
+
+        if side == "right":
+            robot.turn(-90)
+            DriveTillDouble(9, 450)
+            robot.turn(-90)
+    
+        else:
+            robot.turn(90)
+            DriveTillDouble(9, 450)
+            robot.turn(90)
+
 
     else:
         robot.turn(-90)
