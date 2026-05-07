@@ -46,6 +46,7 @@ def DriveTillDouble(colorIndex, speed):
             break
         
     robot.stop()
+    ev3.speaker.beep()
     wait(100)
 
 def DriveTillColor(whichSensor, colorIndex, speed):

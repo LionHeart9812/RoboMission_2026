@@ -42,7 +42,7 @@ AllArtefacts = 4
 
 pos = []
 perfect = {}
-perfectColor = []
+perfectColor = {}
 goalPlace = {
     "red": 0,
     "green": 1,
@@ -56,8 +56,31 @@ def zweiGrabben():
     robot.drive(350, 0)
     wait(600)
     robot.stop()
-    grabber.run_time(-750, 2150, then=Stop.HOLD)
+    grabber.run_time(-750, 2000)
+    grabber.stop()
     robot.straight(-675)
+
+def vertauschtRechts():
+    grabber.run_time(750, 2200, then=Stop.HOLD)
+    grabber.stop()
+    robot.straight(50)
+    robot.stop()
+    motor_right.run_angle(450, 350)
+    motor_right.run_angle(-450, 500)
+    motor_right.stop()
+    robot.straight(150)
+    robot.straight(-150)
+
+def vertauschtLinks():
+    grabber.run_time(750, 2200, then=Stop.HOLD)
+    grabber.stop()
+    robot.straight(50)
+    robot.stop()
+    motor_left.run_angle(450, 350)
+    motor_left.run_angle(-450, 500)
+    motor_left.stop()
+    robot.straight(150)
+    robot.straight(-150)
     
 def scan():
     nr_blocks, blocks = pixy.get_blocks(0x1F, 3)
@@ -125,9 +148,10 @@ def twoArtefacts():
                 correctOrientation = False
 
             perfect[(pos.index(a), pos.index(b))] = correctOrientation
-            perfectColor.append((a, b))
+            perfectColor[(a, b)] = correctOrientation
             two_artefacts = True
     
+    print("perfectColor:", perfectColor)
     print(perfect)
     print("------------")
     return two_artefacts, correctOrientationExists
@@ -205,7 +229,8 @@ def artefacts(prio, OutsiderIndex):
 
     #Drive to the places
     side, orientation = postioning
-    print(side, orientation)
+    print("Positioning:", side, orientation)
+    print("---------------")
     DriveTillDouble(9, -200)
 
     if prio == 4 or prio == 3:
@@ -226,20 +251,28 @@ def artefacts(prio, OutsiderIndex):
         #Checken, welche seite Guppy der süße ist
         if side == "left":
             robot.turn(90)
-            DriveTillDouble(9, 300)
+            DriveTillDouble(9, 200)
+            robot.stop()
+
+        elif side == "middle":
+            robot.straight(10)
+            robot.turn(90)
+            robot.stop()
 
         else:
             robot.turn(90)
-            DriveTillDouble(9, -300)
+            DriveTillDouble(9, -200)
+            robot.stop()
 
         # Wegbringen wenn prio 4 ist
         if prio == 4:
-            for colorPairs in perfectColor:
-                right, left = colorPairs
-                print(right)
+            for colorPairs, orientColor in perfectColor.items():
+                if orientColor:
+                    right, left = colorPairs
+                    print("Right:", right)
 
             if right == "yellow":
-                robot.straight(-200)
+                robot.straight(-150)
                 robot.turn(92)
 
             elif right == "blue":
@@ -247,18 +280,61 @@ def artefacts(prio, OutsiderIndex):
                 robot.turn(92)
 
             elif right == "black":
-                robot.straight(125)
+                robot.straight(100)
                 robot.turn(92)
 
             elif right == "green":
-                robot.straight(250)
+                robot.straight(165)
                 robot.turn(92)
 
-            robot.straight(135)
-            grabber.run_time(750, 2200, then=Stop.HOLD)
-            robot.turn(5)
-            robot.turn(-10)
-            robot.turn(50)
+            robot.straight(175)
+            grabber.run_time(750, 2100, then=Stop.HOLD)
+            # robot.turn(10)
+            # robot.turn(-20)
+            # robot.turn(10)
+        
+        if prio == 3:
+            right, left = perfectColor[0]
+
+            print("Left:", left)
+            print("Right:", right)
+
+            if right == "blue":
+                robot.straight(180)
+                robot.straight(100)
+                robot.turn(92)
+
+                if left == "yellow":
+                    vertauschtRechts()
+                else:
+                    vertauschtLinks()
+
+            elif right == "black":
+                robot.stop(50)
+                robot.turn(92)
+
+                if left == "blue":
+                    vertauschtRechts()
+                else:
+                    vertauschtLinks()
+
+            elif right == "green":
+                robot.straight(100)
+                robot.turn(92)
+
+                if left == "black":
+                    vertauschtRechts()
+                else:
+                    vertauschtLinks()
+
+            if right == "red":
+                robot.straight(150)
+                robot.turn(92)
+
+                if left == "green":
+                    vertauschtRechts()
+                else:
+                    vertauschtLinks() 
 
     else:
         robot.turn(-90)
@@ -281,7 +357,8 @@ wait(200)
 # Scannen
 scanDrive()
 priority, whichIndex = checkPrio()
-print(priority, "Index of Red/Yellow:", whichIndex)
+print("Priority:", priority)
+print("Index of Red/Yellow:", whichIndex)
 artefacts(priority, whichIndex)
 grabber.stop()
 robot.stop()
