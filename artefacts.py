@@ -24,7 +24,7 @@ grabber = Motor(Port.C, positive_direction=Direction.COUNTERCLOCKWISE)
 
 colorSensor_left = ColorSensor(Port.S1)
 colorSensor_right = ColorSensor(Port.S4)
-#
+
 colorReflection_left =  colorSensor_left.reflection()
 colorReflection_right = colorSensor_right.reflection()
 
@@ -33,9 +33,8 @@ pixy = Pixy2(port=2, i2c_address=0x54)
 #Gestell des Roboters (Durchmessser der Reifen, Radstand)
 robot = DriveBase(motor_left, motor_right, wheel_diameter=60, axle_track=199)
 
-# Einstellungen variable("robot") + Pixy
+# Einstellungen variable("robot")
 robot.settings(750, 400, 450, 400)
-pixy.set_lamp(1, 1)
 
 # Globale Variabels
 AllArtefacts = 4
@@ -61,26 +60,26 @@ def zweiGrabben():
     robot.straight(-675)
 
 def vertauschtRechts():
-    grabber.run_time(750, 2200, then=Stop.HOLD)
+    grabber.run_time(750, 2100, then=Stop.HOLD)
     grabber.stop()
     robot.straight(50)
     robot.stop()
-    motor_right.run_angle(450, 350)
-    motor_right.run_angle(-450, 500)
+    motor_right.run_angle(450, 330)
+    motor_right.run_angle(-450, 570)
     motor_right.stop()
-    robot.straight(150)
-    robot.straight(-150)
+    robot.straight(225)
+    robot.straight(-225)
 
 def vertauschtLinks():
-    grabber.run_time(750, 2200, then=Stop.HOLD)
+    grabber.run_time(750, 2100, then=Stop.HOLD)
     grabber.stop()
     robot.straight(50)
     robot.stop()
-    motor_left.run_angle(450, 350)
-    motor_left.run_angle(-450, 500)
+    motor_left.run_angle(450, 330)
+    motor_left.run_angle(-450, 570)
     motor_left.stop()
-    robot.straight(150)
-    robot.straight(-150)
+    robot.straight(225)
+    robot.straight(-225)
     
 def scan():
     nr_blocks, blocks = pixy.get_blocks(0x1F, 3)
@@ -239,7 +238,7 @@ def artefacts(prio, OutsiderIndex):
             robot.straight(-100)
 
         elif side == "left":
-            robot.straight(150)
+            robot.straight(165)
     
         else:
             robot.straight(35)
@@ -276,7 +275,7 @@ def artefacts(prio, OutsiderIndex):
                 robot.turn(92)
 
             elif right == "blue":
-                robot.straight(-100)
+                robot.straight(-65)
                 robot.turn(92)
 
             elif right == "black":
@@ -287,22 +286,28 @@ def artefacts(prio, OutsiderIndex):
                 robot.straight(165)
                 robot.turn(92)
 
-            robot.straight(175)
+            robot.drive(200, 0)
+            wait(450)
+            robot.stop()
+            robot.straight(-10)
             grabber.run_time(750, 2100, then=Stop.HOLD)
             # robot.turn(10)
             # robot.turn(-20)
             # robot.turn(10)
         
         if prio == 3:
-            right, left = perfectColor[0]
+            for colorPairs, orientColor in perfectColor.items():
+                if not orientColor:
+                    right, left = colorPairs
+                    break
 
             print("Left:", left)
             print("Right:", right)
+            robot.stop()
 
             if right == "blue":
-                robot.straight(180)
-                robot.straight(100)
-                robot.turn(92)
+                robot.straight(-155)
+                robot.turn(90)
 
                 if left == "yellow":
                     vertauschtRechts()
@@ -310,7 +315,7 @@ def artefacts(prio, OutsiderIndex):
                     vertauschtLinks()
 
             elif right == "black":
-                robot.stop(50)
+                robot.straight(-15)
                 robot.turn(92)
 
                 if left == "blue":
@@ -347,6 +352,8 @@ print("Programm is ready")
 ev3.light.on(Color.ORANGE)
 while Button.CENTER not in ev3.buttons.pressed():
     pass
+
+pixy.set_lamp(1, 1)
 ev3.screen.clear()
 ev3.light.on(Color.GREEN)
 ev3.speaker.beep()
@@ -360,5 +367,8 @@ priority, whichIndex = checkPrio()
 print("Priority:", priority)
 print("Index of Red/Yellow:", whichIndex)
 artefacts(priority, whichIndex)
+print("-----------------")
+print("One Run completed")
+print("-----------------")
 grabber.stop()
 robot.stop()
