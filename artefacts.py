@@ -60,26 +60,26 @@ def zweiGrabben():
     robot.straight(-675)
 
 def vertauschtRechts():
-    grabber.run_time(750, 2100, then=Stop.HOLD)
+    grabber.run_time(750, 2100)
     grabber.stop()
     robot.straight(50)
     robot.stop()
     motor_right.run_angle(450, 330)
     motor_right.run_angle(-450, 570)
     motor_right.stop()
-    robot.straight(225)
-    robot.straight(-225)
+    robot.straight(220)
+    robot.straight(-220)
 
 def vertauschtLinks():
-    grabber.run_time(750, 2100, then=Stop.HOLD)
+    grabber.run_time(750, 2100)
     grabber.stop()
     robot.straight(50)
     robot.stop()
     motor_left.run_angle(450, 330)
     motor_left.run_angle(-450, 570)
     motor_left.stop()
-    robot.straight(225)
-    robot.straight(-225)
+    robot.straight(220)
+    robot.straight(-220)
     
 def scan():
     nr_blocks, blocks = pixy.get_blocks(0x1F, 3)
@@ -275,26 +275,29 @@ def artefacts(prio, OutsiderIndex):
                 robot.turn(92)
 
             elif right == "blue":
-                robot.straight(-65)
+                robot.straight(-40)
                 robot.turn(92)
 
             elif right == "black":
-                robot.straight(100)
+                robot.straight(55)
                 robot.turn(92)
 
             elif right == "green":
                 robot.straight(165)
                 robot.turn(92)
 
-            robot.drive(200, 0)
-            wait(450)
+            robot.drive(250, 0)
+            wait(700)
             robot.stop()
-            robot.straight(-10)
-            grabber.run_time(750, 2100, then=Stop.HOLD)
-            # robot.turn(10)
-            # robot.turn(-20)
-            # robot.turn(10)
+            wait(50)
+            robot.straight(-15)
+            grabber.run_time(750, 2150)
+            robot.stop()
+            motor_right.run_angle(450, 50)
+            motor_right.run_angle(-450, 50)
+            motor_right.stop()
         
+        # Wegbringen wenn prio 3 ist
         if prio == 3:
             for colorPairs, orientColor in perfectColor.items():
                 if not orientColor:
@@ -341,6 +344,7 @@ def artefacts(prio, OutsiderIndex):
                 else:
                     vertauschtLinks() 
 
+    # Prio 2 und 1
     else:
         robot.turn(-90)
 
