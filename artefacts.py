@@ -55,7 +55,7 @@ def zweiGrabben():
     robot.drive(350, 0)
     wait(600)
     robot.stop()
-    grabber.run_time(-750, 2000)
+    grabber.run_time(-750, 2200)
     grabber.stop()
     robot.straight(-675)
 
@@ -67,8 +67,11 @@ def vertauschtRechts():
     motor_right.run_angle(450, 330)
     motor_right.run_angle(-450, 570)
     motor_right.stop()
-    robot.straight(220)
-    robot.straight(-220)
+    robot.straight(215)
+    robot.straight(-215)
+    robot.stop()
+    motor_right.run_angle(-450, 315)
+    motor_right.stop()
 
 def vertauschtLinks():
     grabber.run_time(750, 2100)
@@ -78,8 +81,11 @@ def vertauschtLinks():
     motor_left.run_angle(450, 330)
     motor_left.run_angle(-450, 570)
     motor_left.stop()
-    robot.straight(220)
-    robot.straight(-220)
+    robot.straight(215)
+    robot.straight(-215)
+    robot.stop()
+    motor_left.run_angle(-450, 315)
+    motor_left.stop()
     
 def scan():
     nr_blocks, blocks = pixy.get_blocks(0x1F, 3)
@@ -159,6 +165,7 @@ def twoArtefacts():
 def checkPrio():
     isTwoArtefacts, correctOrentation = twoArtefacts()
     whichIndex = -1
+    whichIndexColor = "None"
 
     if isTwoArtefacts:
         if correctOrentation:
@@ -171,14 +178,17 @@ def checkPrio():
             if i == "yellow" or i == "red":
                 priority = 2
                 whichIndex = pos.index(i)
+                whichIndexColor = i
+                break
             else:
                 priority = 1
                 whichIndex = pos.index(i)
+                whichIndexColor = i
 
-    return priority, whichIndex
+    return priority, whichIndex, whichIndexColor
 
 # Wegbringen
-def artefacts(prio, OutsiderIndex):
+def artefacts(prio, OutsiderIndex, OutsiderColor):
     pixy.set_lamp(0, 0)
 
     # Check Priority and give positioning
@@ -271,7 +281,7 @@ def artefacts(prio, OutsiderIndex):
                     print("Right:", right)
 
             if right == "yellow":
-                robot.straight(-150)
+                robot.straight(-175)
                 robot.turn(92)
 
             elif right == "blue":
@@ -283,12 +293,14 @@ def artefacts(prio, OutsiderIndex):
                 robot.turn(92)
 
             elif right == "green":
-                robot.straight(165)
+                robot.straight(270)
                 robot.turn(92)
 
             robot.drive(250, 0)
-            wait(700)
+            ev3.speaker.beep()
+            wait(600)
             robot.stop()
+            ev3.speaker.beep()
             wait(50)
             robot.straight(-15)
             grabber.run_time(750, 2150)
@@ -296,6 +308,22 @@ def artefacts(prio, OutsiderIndex):
             motor_right.run_angle(450, 50)
             motor_right.run_angle(-450, 50)
             motor_right.stop()
+            robot.straight(-150)
+            robot.turn(90)
+
+            # Zurückfahren        
+            if right == "blue":
+                robot.straight(100)
+
+            elif right == "black":
+                robot.straight(175)
+
+            elif right == "green":
+                robot.straight(250)
+
+            robot.turn(90)
+            robot.straight(500)
+            robot.turn(-90)
         
         # Wegbringen wenn prio 3 ist
         if prio == 3:
@@ -317,8 +345,10 @@ def artefacts(prio, OutsiderIndex):
                 else:
                     vertauschtLinks()
 
+                robot.straight(75)
+
             elif right == "black":
-                robot.straight(-15)
+                robot.straight(50)
                 robot.turn(92)
 
                 if left == "blue":
@@ -326,8 +356,10 @@ def artefacts(prio, OutsiderIndex):
                 else:
                     vertauschtLinks()
 
+                robot.straight(125)
+
             elif right == "green":
-                robot.straight(100)
+                robot.straight(125)
                 robot.turn(92)
 
                 if left == "black":
@@ -335,17 +367,76 @@ def artefacts(prio, OutsiderIndex):
                 else:
                     vertauschtLinks()
 
+                robot.straight(200)
+
             if right == "red":
-                robot.straight(150)
+                robot.straight(175)
                 robot.turn(92)
 
                 if left == "green":
                     vertauschtRechts()
                 else:
-                    vertauschtLinks() 
+                    vertauschtLinks()
+
+                robot.straight(275) 
+
+            robot.turn(90)
+            robot.straight(500)
+            robot.turn(-90)
 
     # Prio 2 und 1
     else:
+        if OutsiderIndex == 3:
+            robot.straight(200)
+        elif OutsiderIndex == 2:
+            robot.straight(125)
+        elif OutsiderIndex == 1:
+            robot.straight(-15)
+        elif OutsiderIndex == 0:
+            robot.straight(-125)
+
+        robot.turn(90)
+        robot.stop()
+
+        motor_left.run_angle(450, 150)
+        motor_left.stop()
+        robot.straight(90)
+        grabber.run_time(-750, 2050)
+        grabber.stop()
+        robot.straight(-200)
+        robot.stop()
+
+        motor_left.run_angle(450, 250)
+        motor_left.stop()
+        robot.straight(-300)
+        robot.stop()
+
+        motor_left.run_angle(450, -395)
+        motor_left.stop()
+        robot.straight(-300)
+        robot.turn(92)
+        DriveTillDouble(9, 250)
+
+        if whichIndexColor == "yellow":
+            robot.straight(-350)
+        elif whichIndexColor == "red":
+            robot.straight(200)
+
+        robot.turn(90)
+        robot.straight(100)
+        grabber.run_time(750, 2050)
+        grabber.stop()
+        robot.straight(-150)
+
+        #Zurückfahren
+        if whichIndexColor == "yellow":
+            robot.turn(180)
+        elif whichIndexColor == "red":
+            robot.turn(90)
+            robot.straight(350)
+            robot.turn(90)
+
+        robot.straight(500)
         robot.turn(-90)
 
 
@@ -367,10 +458,10 @@ wait(200)
 
 # Scannen
 scanDrive()
-priority, whichIndex = checkPrio()
+priority, whichIndex, whichIndexColor = checkPrio()
 print("Priority:", priority)
 print("Index of Red/Yellow:", whichIndex)
-artefacts(priority, whichIndex)
+artefacts(priority, whichIndex, whichIndexColor)
 print("-----------------")
 print("One Run completed")
 print("-----------------")
