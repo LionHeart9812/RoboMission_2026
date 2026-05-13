@@ -41,13 +41,13 @@ AllArtefacts = 4
 
 pos = []
 perfect = {}
-perfectColor = {}
 goalPlace = {
     "red": 0,
     "green": 1,
     "black": 2,
     "blue": 3,
-    "yellow": 4
+    "yellow": 4,
+    "empty": 10
 }
 
 # --- Funktionen --- #
@@ -60,7 +60,7 @@ def zweiGrabben():
     robot.straight(-675)
 
 def vertauschtRechts():
-    grabber.run_time(750, 2100)
+    grabber.run_time(750, 2050)
     grabber.stop()
     robot.straight(50)
     robot.stop()
@@ -70,11 +70,11 @@ def vertauschtRechts():
     robot.straight(215)
     robot.straight(-215)
     robot.stop()
-    motor_right.run_angle(-450, 315)
+    motor_right.run_angle(-450, 345)
     motor_right.stop()
 
 def vertauschtLinks():
-    grabber.run_time(750, 2100)
+    grabber.run_time(750, 2050)
     grabber.stop()
     robot.straight(50)
     robot.stop()
@@ -84,9 +84,20 @@ def vertauschtLinks():
     robot.straight(215)
     robot.straight(-215)
     robot.stop()
-    motor_left.run_angle(-450, 315)
+    motor_left.run_angle(-450, 345)
     motor_left.stop()
     
+def bandeAusrichten():
+    robot.drive(-250, 0)
+    ev3.speaker.beep()
+    wait(1350)
+    robot.stop()
+    ev3.speaker.beep()
+    wait(50)
+
+    robot.straight(200)
+    robot.turn(-90)
+
 def scan():
     nr_blocks, blocks = pixy.get_blocks(0x1F, 3)
     minWidth = 70
@@ -128,15 +139,13 @@ def scanDrive():
     print(color)
     pos.append(color)
 
-    print("----------------")
-    print(pos)
-    print("----------------")
-
 # Checken, ob es zwei nebeneinander gibt
 def twoArtefacts():
+    global perfect  
     two_artefacts = False
     correctOrientation = False
     correctOrientationExists = False
+    perfect = {}
 
     for i in range(len(pos) - 1):
         a = pos[i]
@@ -152,17 +161,16 @@ def twoArtefacts():
                 print("Getauschte Artefaktposition")
                 correctOrientation = False
 
-            perfect[(pos.index(a), pos.index(b))] = correctOrientation
-            perfectColor[(a, b)] = correctOrientation
+            perfect[(i, i+1)] = ((a, b), correctOrientation)
             two_artefacts = True
     
-    print("perfectColor:", perfectColor)
     print(perfect)
     print("------------")
     return two_artefacts, correctOrientationExists
 
 # Checken, welche Prios
 def checkPrio():
+    global AllArtefacts
     isTwoArtefacts, correctOrentation = twoArtefacts()
     whichIndex = -1
     whichIndexColor = "None"
@@ -173,6 +181,8 @@ def checkPrio():
         else:
             priority = 3
 
+        AllArtefacts -= 2
+
     elif not isTwoArtefacts:
         for i in pos:
             if i == "yellow" or i == "red":
@@ -182,19 +192,23 @@ def checkPrio():
                 break
             else:
                 priority = 1
-                whichIndex = pos.index(i)
-                whichIndexColor = i
+                if i != "empty":
+                    whichIndex = pos.index(i)
+                    whichIndexColor = i
+                
+
+        AllArtefacts -= 1
 
     return priority, whichIndex, whichIndexColor
 
 # Wegbringen
-def artefacts(prio, OutsiderIndex, OutsiderColor):
+def collect_artefacts(prio, OutsiderIndex, whichIndexColor):
     pixy.set_lamp(0, 0)
 
     # Check Priority and give positioning
     # if there is a correctOrentiation one
     if prio == 4:
-        for pairs, orientValue in perfect.items():
+        for pairs, (blockColor, orientValue) in perfect.items():
             if not orientValue:
                 print("not the right one")
                 pass
@@ -214,7 +228,7 @@ def artefacts(prio, OutsiderIndex, OutsiderColor):
 
     # if there isn't
     elif prio == 3:
-        for pairs, orientValue in perfect.items():
+        for pairs, (blockIndex, orientValue) in perfect.items():
             if 0 in pairs:
                 postioning = ("right", "false")
             elif 3 in pairs:
@@ -275,13 +289,15 @@ def artefacts(prio, OutsiderIndex, OutsiderColor):
 
         # Wegbringen wenn prio 4 ist
         if prio == 4:
-            for colorPairs, orientColor in perfectColor.items():
-                if orientColor:
-                    right, left = colorPairs
+            for pairs, (blockName, orientValue) in perfect.items():
+                if orientValue:
+                    right, left = blockName
+                    rightIndex, leftIndex = pairs
                     print("Right:", right)
+                    break
 
             if right == "yellow":
-                robot.straight(-175)
+                robot.straight(-200)
                 robot.turn(92)
 
             elif right == "blue":
@@ -289,7 +305,7 @@ def artefacts(prio, OutsiderIndex, OutsiderColor):
                 robot.turn(92)
 
             elif right == "black":
-                robot.straight(55)
+                robot.straight(85)
                 robot.turn(92)
 
             elif right == "green":
@@ -302,9 +318,11 @@ def artefacts(prio, OutsiderIndex, OutsiderColor):
             robot.stop()
             ev3.speaker.beep()
             wait(50)
-            robot.straight(-15)
-            grabber.run_time(750, 2150)
+            robot.straight(-25)
             robot.stop()
+            grabber.run_time(750, 2150)
+            grabber.stop()
+
             motor_right.run_angle(450, 50)
             motor_right.run_angle(-450, 50)
             motor_right.stop()
@@ -321,15 +339,19 @@ def artefacts(prio, OutsiderIndex, OutsiderColor):
             elif right == "green":
                 robot.straight(250)
 
-            robot.turn(90)
-            robot.straight(500)
+            robot.turn(91)
+            robot.straight(525)
             robot.turn(-90)
+
+            pos[rightIndex] = "empty"
+            pos[leftIndex] = "empty"
         
         # Wegbringen wenn prio 3 ist
         if prio == 3:
-            for colorPairs, orientColor in perfectColor.items():
-                if not orientColor:
-                    right, left = colorPairs
+            for pairs, (blockName, orientValue) in perfect.items():
+                if not orientValue:
+                    right, left = blockName
+                    rightIndex, leftIndex = pairs
                     break
 
             print("Left:", left)
@@ -345,6 +367,11 @@ def artefacts(prio, OutsiderIndex, OutsiderColor):
                 else:
                     vertauschtLinks()
 
+                robot.straight(-400)
+                robot.turn(90)
+                bandeAusrichten()
+                robot.straight(400)
+
                 robot.straight(75)
 
             elif right == "black":
@@ -356,7 +383,12 @@ def artefacts(prio, OutsiderIndex, OutsiderColor):
                 else:
                     vertauschtLinks()
 
-                robot.straight(125)
+                robot.straight(-350)
+                robot.turn(90)
+                bandeAusrichten()
+                robot.straight(350)
+
+                robot.straight(175)
 
             elif right == "green":
                 robot.straight(125)
@@ -366,41 +398,54 @@ def artefacts(prio, OutsiderIndex, OutsiderColor):
                     vertauschtRechts()
                 else:
                     vertauschtLinks()
+                
+                robot.straight(-250)
+                robot.turn(90)
+                bandeAusrichten()
+                robot.straight(250)
 
                 robot.straight(200)
 
             if right == "red":
-                robot.straight(175)
+                robot.straight(190)
                 robot.turn(92)
 
                 if left == "green":
                     vertauschtRechts()
                 else:
                     vertauschtLinks()
-
+                
+                robot.straight(-150)
+                robot.turn(90)
+                bandeAusrichten()
+                robot.straight(150)
+                
                 robot.straight(275) 
 
             robot.turn(90)
             robot.straight(500)
             robot.turn(-90)
 
+            pos[rightIndex] = "empty"
+            pos[leftIndex] = "empty"
+
     # Prio 2 und 1
     else:
         if OutsiderIndex == 3:
-            robot.straight(200)
+            robot.straight(250)
         elif OutsiderIndex == 2:
-            robot.straight(125)
+            robot.straight(135)
         elif OutsiderIndex == 1:
             robot.straight(-15)
         elif OutsiderIndex == 0:
-            robot.straight(-125)
+            robot.straight(-115)
 
         robot.turn(90)
         robot.stop()
 
         motor_left.run_angle(450, 150)
         motor_left.stop()
-        robot.straight(90)
+        robot.straight(100)
         grabber.run_time(-750, 2050)
         grabber.stop()
         robot.straight(-200)
@@ -408,37 +453,48 @@ def artefacts(prio, OutsiderIndex, OutsiderColor):
 
         motor_left.run_angle(450, 250)
         motor_left.stop()
-        robot.straight(-300)
+        robot.straight(-175)
         robot.stop()
 
         motor_left.run_angle(450, -395)
         motor_left.stop()
-        robot.straight(-300)
+        robot.straight(-350)
         robot.turn(92)
         DriveTillDouble(9, 250)
 
         if whichIndexColor == "yellow":
-            robot.straight(-350)
+            robot.straight(-325)
         elif whichIndexColor == "red":
-            robot.straight(200)
+            robot.straight(175)
 
         robot.turn(90)
-        robot.straight(100)
-        grabber.run_time(750, 2050)
+        robot.straight(125)
+        grabber.run_time(750, 2100)
         grabber.stop()
         robot.straight(-150)
 
         #Zurückfahren
         if whichIndexColor == "yellow":
-            robot.turn(180)
+            robot.turn(-89)
+            robot.straight(550)
+            robot.turn(-90)
         elif whichIndexColor == "red":
-            robot.turn(90)
-            robot.straight(350)
-            robot.turn(90)
+            robot.turn(-89)
+            robot.straight(250)
+            robot.turn(-90)
 
-        robot.straight(500)
-        robot.turn(-90)
+        robot.drive(350, 0)
+        ev3.speaker.beep()
+        wait(2500)
+        robot.stop()
+        ev3.speaker.beep()
+        wait(50)
 
+        robot.straight(-145)
+        robot.turn(-91)
+        robot.straight(450)
+
+        pos[OutsiderIndex] = "empty"
 
 # ---- Main Programm ---- #
 # Warten bis Mittelknopf gedrückt
@@ -454,16 +510,26 @@ ev3.light.on(Color.GREEN)
 ev3.speaker.beep()
 wait(200)
 
-# while AllArtefacts < 0:
+def artefactsMain():
+    global AllArtefacts 
+    # Scannen
+    scanDrive()
 
-# Scannen
-scanDrive()
-priority, whichIndex, whichIndexColor = checkPrio()
-print("Priority:", priority)
-print("Index of Red/Yellow:", whichIndex)
-artefacts(priority, whichIndex, whichIndexColor)
-print("-----------------")
-print("One Run completed")
-print("-----------------")
-grabber.stop()
-robot.stop()
+    while AllArtefacts > 0:
+        print("----------------")
+        print(pos)
+        print("----------------")
+
+        priority, whichIndex, whichIndexColor = checkPrio()
+        print("Priority:", priority)
+        print("Index of Red/Yellow:", whichIndex)
+
+        collect_artefacts(priority, whichIndex, whichIndexColor)
+        print("-----------------")
+        print("One Run completed")
+        print("-----------------")
+
+        grabber.stop()
+        robot.stop()
+
+artefactsMain()
