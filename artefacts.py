@@ -412,7 +412,7 @@ def collect_artefacts(prio, OutsiderIndex, whichIndexColor):
 
                 robot.straight(200)
 
-            if right == "red":
+            elif right == "red":
                 robot.straight(205)
                 robot.turn(92)
 
@@ -520,21 +520,10 @@ def collect_artefacts(prio, OutsiderIndex, whichIndexColor):
         pos[OutsiderIndex] = "empty"
 
 # ---- Main Programm ---- #
-# Warten bis Mittelknopf gedrückt
-ev3.screen.draw_text(x=10, y=10, text="Ready to start")
-print("Programm is ready")
-ev3.light.on(Color.ORANGE)
-while Button.CENTER not in ev3.buttons.pressed():
-    pass
-
-pixy.set_lamp(1, 1)
-ev3.screen.clear()
-ev3.light.on(Color.GREEN)
-ev3.speaker.beep()
-wait(200)
-
 def artefactsMain():
     global AllArtefacts 
+    pixy.set_lamp(1, 1)
+
     # Scannen
     scanDrive()
 
@@ -556,5 +545,3 @@ def artefactsMain():
         robot.stop()
 
     DriveTillDouble(9, -350)
-
-artefactsMain()

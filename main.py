@@ -9,6 +9,7 @@ from pybricks.media.ev3dev import SoundFile, ImageFile
 from pixycamev3.pixy2 import Pixy2
 import time
 from linefollower import *
+from artefacts import artefactsMain
 
 # This program requires LEGO EV3 MicroPython v2.0 or higher.
 # Click "Open user guide" on the EV3 extension tab for more information.
@@ -258,3 +259,6 @@ grabber.run_time(-750, 2000, then=Stop.HOLD)
 
 robot.straight(-200)
 grabber.run_time(750, 1250, then=Stop.HOLD)
+
+# ----- Artefakte ----- #
+artefactsMain()
