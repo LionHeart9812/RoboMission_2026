@@ -107,18 +107,23 @@ def scan():
             if b.sig == 1 and b.width >= minWidth:
                 print("Breite der Farbe:", b.width)
                 return "red"
+            
             elif b.sig == 2 and b.width >= minWidth:
                 print("Breite der Farbe:", b.width)
                 return "yellow"
+            
             elif b.sig == 3 and b.width >= minWidth:
                 print("Breite der Farbe:", b.width)
                 return "green"
+            
             elif b.sig == 4 and b.width >= minWidth:
                 print("Breite der Farbe:", b.width)
                 return "blue"
+            
             else:
                 print("Wahrscheinlich schwoarz")
                 return "black"
+            
             
     else:
         print("Wahrscheinlich schwoarz")
@@ -203,6 +208,7 @@ def checkPrio():
 
 # Wegbringen
 def collect_artefacts(prio, OutsiderIndex, whichIndexColor):
+    global AllArtefacts
     pixy.set_lamp(0, 0)
 
     # Check Priority and give positioning
@@ -297,7 +303,7 @@ def collect_artefacts(prio, OutsiderIndex, whichIndexColor):
                     break
 
             if right == "yellow":
-                robot.straight(-200)
+                robot.straight(-185)
                 robot.turn(92)
 
             elif right == "blue":
@@ -407,7 +413,7 @@ def collect_artefacts(prio, OutsiderIndex, whichIndexColor):
                 robot.straight(200)
 
             if right == "red":
-                robot.straight(190)
+                robot.straight(205)
                 robot.turn(92)
 
                 if left == "green":
@@ -443,46 +449,63 @@ def collect_artefacts(prio, OutsiderIndex, whichIndexColor):
         robot.turn(90)
         robot.stop()
 
-        motor_left.run_angle(450, 150)
+        motor_left.run_angle(450, 175)
         motor_left.stop()
         robot.straight(100)
-        grabber.run_time(-750, 2050)
+        grabber.run_time(-750, 2100)
         grabber.stop()
+        robot.straight(-300)
+        robot.stop()
+
+        motor_left.run_angle(450, 225)
+        motor_left.stop()
         robot.straight(-200)
         robot.stop()
 
-        motor_left.run_angle(450, 250)
+        motor_left.run_angle(450, -385)
         motor_left.stop()
-        robot.straight(-175)
-        robot.stop()
-
-        motor_left.run_angle(450, -395)
-        motor_left.stop()
-        robot.straight(-350)
+        robot.straight(-325)
         robot.turn(92)
         DriveTillDouble(9, 250)
 
         if whichIndexColor == "yellow":
             robot.straight(-325)
+        elif whichIndexColor == "blue":
+            robot.straight(-225)
+        elif whichIndexColor == "black":
+            robot.straight(15)
+        elif whichIndexColor == "green":
+            robot.straight(75)
         elif whichIndexColor == "red":
             robot.straight(175)
 
         robot.turn(90)
-        robot.straight(125)
+
+        robot.drive(250, 0)
+        ev3.speaker.beep()
+        wait(600)
+        robot.stop()
+        ev3.speaker.beep()
+        wait(50)
+
         grabber.run_time(750, 2100)
         grabber.stop()
         robot.straight(-150)
+        robot.turn(-89)
 
         #Zurückfahren
-        if whichIndexColor == "yellow":
-            robot.turn(-89)
+        if whichIndexColor == "yellow":    
             robot.straight(550)
-            robot.turn(-90)
+        elif whichIndexColor == "blue":
+            robot.straight(500)
+        elif whichIndexColor == "black":
+            robot.straight(425)
+        elif whichIndexColor == "green":
+            robot.straight(325)
         elif whichIndexColor == "red":
-            robot.turn(-89)
             robot.straight(250)
-            robot.turn(-90)
 
+        robot.turn(-90)
         robot.drive(350, 0)
         ev3.speaker.beep()
         wait(2500)
@@ -531,5 +554,7 @@ def artefactsMain():
 
         grabber.stop()
         robot.stop()
+
+    DriveTillDouble(9, -350)
 
 artefactsMain()
