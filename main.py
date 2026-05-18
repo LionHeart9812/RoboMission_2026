@@ -37,7 +37,7 @@ ev3.speaker.beep()
 
 #Gestell des Roboters (Durchmessser der Reifen, Radstand)-hahaha
 robot = DriveBase(motor_left, motor_right, wheel_diameter=60, axle_track=199)
-robot.settings(800, 500, 600, 450)
+robot.settings(700, 500, 500, 450)
 
 # Fahren auf Zeit
 def driveTime(speeder, timeMS):
@@ -65,6 +65,94 @@ ev3.light.on(Color.GREEN)
 ev3.speaker.beep()
 wait(200)
 
+# --- Türme stacken --- #
+# grabber.run_time(400, 5000, then=Stop.HOLD, wait=False)
+lifter.run_time(-200, 300, then=Stop.HOLD, wait=False)
+robot.straight(200)
+robot.turn(93)
+DriveTillDouble(7, 250)
+
+# In beide Türme reinfahren
+robot.drive(200, 0)
+ev3.speaker.beep()
+wait(900)
+robot.stop()
+ev3.speaker.beep()
+wait(50)
+
+robot.straight(-10)
+lifter.run_time(200, 75, then=Stop.COAST, wait=False)
+grabber.run_time(-1000, 2900, then=Stop.COAST)
+
+robot.straight(-50)
+DriveTillDouble(7, -200)
+robot.straight(25)
+robot.stop()
+robot.turn(93)
+robot.straight(400)
+DriveTillDouble(7, 400)
+
+robot.turn(70)
+DriveTillColor("left", 7, 300)
+robot.stop()
+
+# Bro steht bei der Mittellinie
+robot.straight(-40)
+robot.turn(-65)
+robot.straight(165)
+robot.stop()
+LF_StopLine(2, 0.75, 25, 250)
+robot.straight(-20)
+grabber.run_time(1000, 2450, wait=False, then=Stop.COAST)
+wait(2300)
+
+### Rechten Turm abstellen
+lifter.run_time(-200, 150, then=Stop.HOLD)
+robot.straight(-160)
+grabber.run_angle(-1000, 1700, wait=False)
+robot.turn(91)
+robot.straight(80)
+robot.turn(-90)
+robot.straight(225)
+
+grabber.run_time(1000, 1750, then=Stop.COAST)
+lifter.run_time(-150, 1000, then=Stop.HOLD)
+
+robot.straight(-95)
+robot.turn(90)
+robot.straight(175)
+
+# Abstellen
+lifter.run_time(150, 325, then=Stop.HOLD)
+grabber.run_time(-100, 2500, then=Stop.HOLD)
+
+grabber.run_time(-750, 750, then=Stop.HOLD, wait=False)
+robot.straight(-220)
+
+### Den linken Turm wegbringen
+lifter.run_time(150, 400, then=Stop.COAST, wait=False)
+
+robot.straight(-160)
+robot.turn(-90)
+robot.straight(175)
+robot.straight(-10)
+
+grabber.run_time(1000, 3250, then=Stop.HOLD)
+lifter.run_time(-150, 1000, then=Stop.HOLD)
+
+robot.straight(-150)
+robot.turn(-90)
+robot.straight(142.5)
+
+#Abstellen
+lifter.run_time(150, 350, then=Stop.HOLD)
+grabber.run_time(-100, 1500, then=Stop.HOLD)
+
+robot.straight(-200)
+grabber.run_time(100, 650, then=Stop.HOLD)
+
+time.sleep(120)
+
 # --- Blau + Schwarze Mensch nehmen --- #
 lifter.run_time(-200, 500, then=Stop.HOLD, wait=False)
 grabber.run_time(-750, 1750, then=Stop.HOLD, wait=False)
@@ -76,7 +164,7 @@ robot.straight(-5)
 robot.turn(-95)
 robot.straight(300)
 robot.turn(45)
-DriveTillDouble(7, 400)
+DriveTillDouble(7, 300)
 robot.straight(150)
 robot.turn(-75)
 robot.stop()
@@ -180,85 +268,6 @@ robot.straight(-100)
 
 time.sleep(60)
 
-# --- Türme stacken --- #
-# grabber.run_time(400, 5000, then=Stop.HOLD, wait=False)
-lifter.run_time(-200, 300, then=Stop.HOLD, wait=False)
-robot.straight(195)
-robot.turn(94)
-DriveTillDouble(7, 250)
-
-# In beide Türme reinfahren
-robot.straight(170)
-robot.straight(-20)
-lifter.run_time(200, 75, then=Stop.COAST, wait=False)
-grabber.run_time(-750, 3200, then=Stop.HOLD)
-
-robot.straight(-60)
-DriveTillDouble(7, -200)
-robot.stop()
-robot.turn(93)
-robot.straight(200)
-DriveTillDouble(7, 450)
-
-robot.turn(70)
-DriveTillColor("left", 7, 300)
-robot.stop()
-
-# Bro steht bei der Mittellinie
-robot.straight(-10)
-robot.turn(-58)
-robot.straight(125)
-robot.stop()
-LF_StopLine(2.5, 0.4, 25, 300)
-robot.straight(-20)
-grabber.run_time(700, 3800, wait=False)
-wait(3000)
-
-### Rechten Turm abstellen
-lifter.run_time(-200, 150, then=Stop.HOLD)
-robot.straight(-150)
-robot.straight(-10)
-grabber.run_angle(-700, 2750, wait=False)
-robot.turn(91)
-robot.straight(100)
-robot.turn(-90)
-robot.straight(180)
-
-grabber.run_time(700, 4100, then=Stop.HOLD)
-lifter.run_time(-150, 1000, then=Stop.HOLD)
-
-robot.straight(-85)
-robot.turn(90)
-robot.straight(155)
-
-# Abstellen
-lifter.run_time(150, 325, then=Stop.HOLD)
-grabber.run_time(-750, 3000, then=Stop.HOLD)
-
-grabber.run_time(-750, 750, then=Stop.HOLD, wait=False)
-robot.straight(-200)
-
-### Den linken Turm wegbringen
-lifter.run_time(150, 400, then=Stop.COAST, wait=False)
-
-robot.straight(-160)
-robot.turn(-90)
-robot.straight(175)
-robot.straight(-10)
-
-grabber.run_time(600, 4500, then=Stop.HOLD)
-lifter.run_time(-150, 1000, then=Stop.HOLD)
-
-robot.straight(-150)
-robot.turn(-90)
-robot.straight(142.5)
-
-#Abstellen
-lifter.run_time(150, 350, then=Stop.HOLD)
-grabber.run_time(-750, 2000, then=Stop.HOLD)
-
-robot.straight(-200)
-grabber.run_time(750, 1250, then=Stop.HOLD)
 
 # ----- Artefakte ----- #
 artefactsMain()
