@@ -74,7 +74,6 @@ DriveTillDouble(7, 250)
 
 # In beide Türme reinfahren
 robot.drive(200, 0)
-ev3.speaker.beep()
 wait(900)
 robot.stop()
 ev3.speaker.beep()
@@ -82,7 +81,7 @@ wait(50)
 
 robot.straight(-10)
 lifter.run_time(200, 75, then=Stop.COAST, wait=False)
-grabber.run_time(-1000, 2900, then=Stop.COAST)
+grabber.run_time(-1000, 2850, then=Stop.COAST)
 
 robot.straight(-50)
 DriveTillDouble(7, -200)
@@ -99,59 +98,92 @@ robot.stop()
 # Bro steht bei der Mittellinie
 robot.straight(-40)
 robot.turn(-65)
-robot.straight(165)
+robot.straight(225)
 robot.stop()
-LF_StopLine(2, 0.75, 25, 250)
 robot.straight(-20)
-grabber.run_time(1000, 2450, wait=False, then=Stop.COAST)
-wait(2300)
+grabber.run_time(1000, 2350, wait=False, then=Stop.COAST)
+wait(2200)
 
-### Rechten Turm abstellen
+### Rechten Turm mitnehmen
 lifter.run_time(-200, 150, then=Stop.HOLD)
 robot.straight(-160)
-grabber.run_angle(-1000, 1700, wait=False)
+grabber.run_angle(-1000, 1900, wait=False)
 robot.turn(91)
 robot.straight(80)
 robot.turn(-90)
-robot.straight(225)
+robot.straight(250)
 
-grabber.run_time(1000, 1750, then=Stop.COAST)
+grabber.run_time(1000, 1900, then=Stop.COAST)
 lifter.run_time(-150, 1000, then=Stop.HOLD)
 
-robot.straight(-95)
+robot.straight(-365)
 robot.turn(90)
-robot.straight(175)
 
-# Abstellen
-lifter.run_time(150, 325, then=Stop.HOLD)
-grabber.run_time(-100, 2500, then=Stop.HOLD)
+robot.drive(-350, 0)
+wait(2000)
+robot.stop()
+ev3.speaker.beep()
+wait(50)
 
-grabber.run_time(-750, 750, then=Stop.HOLD, wait=False)
-robot.straight(-220)
+robot.straight(125)
+robot.turn(-91)
+robot.stop()
+wait(50)
 
-### Den linken Turm wegbringen
-lifter.run_time(150, 400, then=Stop.COAST, wait=False)
-
-robot.straight(-160)
-robot.turn(-90)
-robot.straight(175)
-robot.straight(-10)
-
-grabber.run_time(1000, 3250, then=Stop.HOLD)
-lifter.run_time(-150, 1000, then=Stop.HOLD)
-
-robot.straight(-150)
-robot.turn(-90)
-robot.straight(142.5)
+DriveTillDouble(9, -250)
+robot.stop()
+robot.straight(485)
+robot.stop()
+wait(50)
 
 #Abstellen
-lifter.run_time(150, 350, then=Stop.HOLD)
-grabber.run_time(-100, 1500, then=Stop.HOLD)
+grabber.run_angle(-1000, 1500, then=Stop.COAST, wait=False)
+wait(75)
+lifter.run_time(200, 175, then=Stop.COAST, wait=False)
+wait(1500)
+lifter.run_time(-200, 200, then=Stop.HOLD)
+
+#robot.straight(20)
+robot.straight(-250)
+robot.turn(90)
+
+robot.drive(-350, 0)
+wait(1500)
+robot.stop()
+ev3.speaker.beep()
+wait(50)
+
+# Linken Turm nehmen
+robot.straight(360)
+robot.turn(-90)
+lifter.run_time(200, 175, then=Stop.COAST, wait=False)
+robot.straight(250)
+
+grabber.run_time(1000, 1850, then=Stop.COAST)
+lifter.run_time(-150, 1000, then=Stop.HOLD)
 
 robot.straight(-200)
-grabber.run_time(100, 650, then=Stop.HOLD)
+robot.turn(90)
+robot.straight(440)
+robot.turn(-90)
+robot.straight(180)
+robot.stop()
 
-time.sleep(120)
+# Abstellen
+grabber.run_angle(-1000, 1500, then=Stop.COAST, wait=False)
+wait(75)
+lifter.run_time(200, 175, then=Stop.COAST)
+wait(1500)
+lifter.run_time(-200, 200, then=Stop.HOLD)
+
+robot.straight(-200)
+robot.turn(45)
+robot.straight(-50)
+
+time.sleep(60)
+
+# ----- Aktefakte ----- #
+artefactsMain()
 
 # --- Blau + Schwarze Mensch nehmen --- #
 lifter.run_time(-200, 500, then=Stop.HOLD, wait=False)
@@ -213,7 +245,6 @@ robot.straight(-160)
 
 robot.turn(-100)
 grabber.run_time(750, 2250, wait=False)
-
 robot.stop()
 
 # --- Rot + Grüne Mensch nehmen --- #
@@ -265,9 +296,3 @@ wait(15)
 robot.straight(400)
 grabber.run_time(750, 2250, then=Stop.HOLD, wait=False)
 robot.straight(-100)
-
-time.sleep(60)
-
-
-# ----- Artefakte ----- #
-artefactsMain()
