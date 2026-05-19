@@ -33,8 +33,6 @@ pixy = Pixy2(port=2, i2c_address=0x54)
 
 seenBlack = 0
 
-ev3.speaker.beep()
-
 #Gestell des Roboters (Durchmessser der Reifen, Radstand)-hahaha
 robot = DriveBase(motor_left, motor_right, wheel_diameter=60, axle_track=199)
 robot.settings(700, 500, 500, 450)
@@ -132,7 +130,7 @@ wait(50)
 
 DriveTillDouble(9, -250)
 robot.stop()
-robot.straight(475)
+robot.straight(480)
 robot.stop()
 wait(50)
 
@@ -163,11 +161,9 @@ robot.straight(250)
 grabber.run_time(1000, 1650, then=Stop.COAST)
 lifter.run_time(-150, 1000, then=Stop.HOLD)
 
-robot.straight(-200)
+robot.straight(90)
 robot.turn(90)
-robot.straight(440)
-robot.turn(-90)
-robot.straight(180)
+robot.straight(345)
 robot.stop()
 
 # Abstellen
@@ -179,8 +175,8 @@ lifter.run_time(-200, 275, then=Stop.HOLD)
 grabber.run_time(-1000, 500, then=Stop.COAST)
 
 robot.straight(-200)
-robot.turn(45)
-robot.straight(-50)
+robot.turn(-90)
+robot.straight(-200)
 
 time.sleep(60)
 
